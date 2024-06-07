@@ -1,4 +1,4 @@
-﻿/**************************************************************************************
+﻿﻿/**************************************************************************************
 Copyright 2015 Applied Research Associates, Inc.
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the License
@@ -29,6 +29,7 @@ specific language governing permissions and limitations under the License.
 #include <biogears/cdm/patient/actions/SESubstanceInfusion.h>
 #include <biogears/cdm/patient/actions/SESubstanceOralDose.h>
 #include <biogears/cdm/patient/assessments/SEUrinalysis.h>
+#include <biogears/cdm/patient/assessments/SEArterialBloodGasAnalysis.h>
 #include <biogears/cdm/properties/SEScalarTypes.h>
 #include <biogears/cdm/substance/SESubstanceManager.h>
 #include <biogears/cdm/system/physiology/SEBloodChemistrySystem.h>
@@ -461,11 +462,16 @@ void PatientRun::run()
 
   // Create the engine and load the patient
   Logger logger(_patient_name + ".log");
-  std::unique_ptr<
-    PhysiologyEngine>
-    _bg = CreateBioGearsEngine(&logger);
+  std::unique_ptr<PhysiologyEngine> engine = CreateBioGearsEngine(&logger);
+  if (!engine) {
+    logger.Error("Could not create BioGears engine");
+    return;
+  }
+
+  _bg = engine.release();
+
   _bg->GetLogger()->Info("Starting " + long_name +  "\n");
-  if (!_bg->LoadState("states/StandardMale@0s.xml")) {
+  if (!_bg->LoadState(_patient_state.ToString(), nullptr)) {
     _bg->GetLogger()->Error("Could not load state, check the error");
     return;
   }
@@ -483,6 +489,7 @@ void PatientRun::run()
   _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("CentralVenousPressure", PressureUnit::mmHg);
   _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("Hematocrit");
   _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("ArterialBloodPH");
+
   _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("UrinationRate", VolumePerTimeUnit::mL_Per_hr);
   _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("WhiteBloodCellCount", AmountPerVolumeUnit::ct_Per_uL);
   _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("UrineProductionRate", VolumePerTimeUnit::mL_Per_min);
@@ -492,23 +499,50 @@ void PatientRun::run()
   _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("CoreTemperature", TemperatureUnit::C);
   _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("SkinTemperature", TemperatureUnit::C);
 
+  // Added physiology records requests
+  _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("TotalBilirubin", MassPerVolumeUnit::mg_Per_dL);
+  _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("Phosphate", AmountPerVolumeUnit::mmol_Per_mL);
+  _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("Hematocrit");
+
   _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Bicarbonate"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
   _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Creatinine"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
   _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Lactate"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
-  _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Piperacillin"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
-  _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Tazobactam"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
+  _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Calcium"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
+  _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Chloride"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
+  _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Creatinine"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
+  _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Glucose"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
+  _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Magnesium"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
+  _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Potassium"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
+  _bg->GetEngineTrack()->GetDataRequestManager().CreateSubstanceDataRequest().Set(*_bg->GetSubstanceManager().GetSubstance("Hemoglobin"), "BloodConcentration", MassPerVolumeUnit::mg_Per_dL);
+
+  // Below vital signs and substances are added based on the competition dataset
+  _bg->GetEngineTrack()->GetDataRequestManager().CreatePhysiologyDataRequest().Set("ArterialCarbonDioxidePressure", PressureUnit::mmHg);
+
+  // Below are vitalsigns that are not natively in the physiology or substances (such as assessments)
+  // First we need to do the assessments to make the values non nan
+  _bg->GetPatientAssessment(_artbloodanalysis);
+  _bg->GetPatientAssessment(_comprehenmetabolicpanel);
+  _bg->GetPatientAssessment(_ptt);
+  // _bg->GetPatientAssessment(_cbc);
+
+  _bg->GetEngineTrack()->GetDataTrack().Probe("BaseExcess(mmol/L)", _artbloodanalysis.GetBaseExcess().GetValue(AmountPerVolumeUnit::mmol_Per_L));
+  _bg->GetEngineTrack()->GetDataTrack().Probe("BUN(mg/dL)", _comprehenmetabolicpanel.GetBUN().GetValue(MassPerVolumeUnit::mg_Per_dL));
+  _bg->GetEngineTrack()->GetDataTrack().Probe("PTT", _ptt.GetInternationalNormalizedRatio().GetValue()); // The definition of this PTT should be checked
+  // _bg->GetEngineTrack()->GetDataTrack().Probe("Platelet(ct/L)", _cbc.GetPlateletCount().GetValue(AmountPerVolumeUnit::ct_Per_uL));
 
   _bg->GetEngineTrack()->GetDataRequestManager().SetResultsFilename(long_name + ".csv");
   _bg->GetEngineTrack()->GetDataRequestManager().SetSamplesPerSecond(1. / (5. * 60.));
 
+  if (_infection_severity != CDM::enumInfectionSeverity::value::Eliminated){
+    SEInfection infection {};
+    infection.SetSeverity(_infection_severity);
+    SEScalarMassPerVolume infection_mic;
+    infection_mic.SetValue(_mic_g_per_l, MassPerVolumeUnit::g_Per_L);
+    infection.GetMinimumInhibitoryConcentration().Set(infection_mic);
+    infection.SetLocation("Gut");
+    _bg->ProcessAction(infection);
+  }
 
-  SEInfection infection {};
-  infection.SetSeverity(_infection_severity);
-  SEScalarMassPerVolume infection_mic;
-  infection_mic.SetValue(_mic_g_per_l, MassPerVolumeUnit::g_Per_L);
-  infection.GetMinimumInhibitoryConcentration().Set(infection_mic);
-  infection.SetLocation("Gut");
-  _bg->ProcessAction(infection);
   auto& substances = _bg->GetSubstanceManager();
 
   SESubstanceCompound* PiperacillinTazobactam = _bg->GetSubstanceManager().GetCompound("PiperacillinTazobactam");
@@ -527,27 +561,46 @@ void PatientRun::run()
   _maintenance_bag->GetBagVolume().SetValue(0, VolumeUnit::mL);
 
   //Load substances we might use
-
   while (0. < _time_remaining_min) {
-    switch (_treatment_plan) {
-    default:
-    case TreatmentPlan::NONE:
-      break;
-    case TreatmentPlan::STANDARD:
-      antibiotics_regimen();
-      break;
-    case TreatmentPlan::REFRESH:
-      antibiotics_regimen();
-      refresh_treatment();
-      break;
-    case TreatmentPlan::EGDT:
-      antibiotics_regimen();
-      egdt_treatment();
-      break;
+    if (_infection_severity != CDM::enumInfectionSeverity::value::Eliminated)
+    {
+      switch (_treatment_plan) {
+      default:
+      case TreatmentPlan::NONE:
+        break;
+      case TreatmentPlan::STANDARD:
+        antibiotics_regimen();
+        break;
+      case TreatmentPlan::REFRESH:
+        antibiotics_regimen();
+        refresh_treatment();
+        break;
+      case TreatmentPlan::EGDT:
+        antibiotics_regimen();
+        egdt_treatment();
+        break;
+      }
     }
     nutrition_regimen();
 
-    _bg->AdvanceModelTime(to_seconds(1), TimeUnit::s);
+    // Advance the engine by 60 seconds in a loop and repeat this loop by 60 times
+    for (int i = 0; i < 60; i++) {
+      _bg->AdvanceModelTime(to_seconds(1), TimeUnit::s);
+
+      // some other necessary operations (experimental)
+      // Process the ArterialBloodGasAnalysis (internally save the states to the member variables)
+      // Which is to be used in the vital sign retrieval process
+      _bg->GetPatientAssessment(_artbloodanalysis);
+      _bg->GetPatientAssessment(_comprehenmetabolicpanel);
+      _bg->GetPatientAssessment(_ptt);
+      // _bg->GetPatientAssessment(_cbc);
+
+      // Below are vitalsigns that are not natively in the physiology or substances (such as assessments)
+      _bg->GetEngineTrack()->GetDataTrack().Probe("BaseExcess(mmol/L)", _artbloodanalysis.GetBaseExcess().GetValue(AmountPerVolumeUnit::mmol_Per_L) + _bg->GetSimulationTime(TimeUnit::s));
+      _bg->GetEngineTrack()->GetDataTrack().Probe("BUN(mg/dL)", _comprehenmetabolicpanel.GetBUN().GetValue(MassPerVolumeUnit::mg_Per_dL));
+      _bg->GetEngineTrack()->GetDataTrack().Probe("PTT", _ptt.GetInternationalNormalizedRatio().GetValue()); // The definition of this PTT should be checked
+      // _bg->GetEngineTrack()->GetDataTrack().Probe("Platelet(ct/L)", _cbc.GetPlateletCount().GetValue(AmountPerVolumeUnit::ct_Per_uL));
+    }
     _time_remaining_min = hours(_duration_hr) - _bg->GetSimulationTime(TimeUnit::min);
   }
 
@@ -597,12 +650,15 @@ PatientRun& PatientRun::infection_severity(std::string severity)
   if (severity == "mild") {
     _infection_severity = CDM::enumInfectionSeverity::value::Mild;
     _infection_severity_str = "Mild";
-  } else if (severity == "") {
+  } else if (severity == "moderate") {
     _infection_severity = CDM::enumInfectionSeverity::value::Moderate;
     _infection_severity_str = "Moderate";
   } else if (severity == "severe") {
     _infection_severity = CDM::enumInfectionSeverity::value::Severe;
     _infection_severity_str = "Severe";
+  } else if (severity == "eliminated") {
+    _infection_severity = CDM::enumInfectionSeverity::value::Eliminated;
+    _infection_severity_str = "Eliminated";
   }
   return *this;
 }

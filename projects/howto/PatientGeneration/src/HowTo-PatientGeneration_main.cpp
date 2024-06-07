@@ -132,6 +132,58 @@ auto read_csv(std::string path, std::string filename) -> csv
   }
 }
 
+void process_trials(const std::vector<std::vector<std::string>>& trials, unsigned int thread_count, unsigned int trial_duration, const std::string& trial_patient) {
+    biogears::ThreadPool pool{ thread_count };
+    auto channel = pool.get_source();
+
+    auto count = 1; // Danger 1 Indexed
+    for (const auto& params : trials) {
+        if (params.size() >= 4) {
+            try {
+                std::string severity = params[0];
+                std::string plan = params[1];
+                double mic = std::stod(params[2]);
+                double apply_at = std::stod(params[3]);
+                double application_interval = std::stod(params[4]);
+
+                double duration = (params.size() > 4) ? std::stod(params[5]) : trial_duration;
+                auto patient = (params.size() > 5) ? params[6] : trial_patient;
+
+                auto patientFile = biogears::filesystem::path(patient);
+
+                PatientRun trial;
+                trial.patient_name(patient).patient_state(patientFile).infection_severity(severity).treatment_plan(plan);
+                trial.mic_g_Per_l(mic).apply_at_m(apply_at).duration_hr(duration);
+
+                channel->insert([=]() mutable {
+                    try {
+                        trial.run();
+                    } catch (const std::exception& e) {
+                        std::cerr << "Error: Exception in trial " << count << ": " << e.what() << std::endl;
+                    }
+                    // trial.run();
+                });
+
+            } catch (const std::exception& e) {
+                std::cerr << "Error: Malformed input skipping trial " << count << " with parameters " << printVector(params) << ": " << e.what() << std::endl;
+                continue;
+            }
+        } else {
+            std::cerr << "Warn: Skipping malformed trial " << count << " with parameters " << printVector(params) << std::endl;
+            continue;
+        }
+        ++count;
+    }
+
+    pool.start();
+    while (!pool.stop_if_empty()) {
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for(16ms);
+    }
+    pool.join();
+}
+
+
 //!
 //! \brief Reads command line argument and executes corresponding operation
 //! \param argc : Number of command line arguments
@@ -209,126 +261,45 @@ int main(int argc, char** argv)
   }
 
   if (args.KeywordFound("CONFIG")) {
-    std::string filename = args.Keyword("CONFIG");
+        std::string filename = args.Keyword("CONFIG");
+        auto trials = read_csv("", filename);
+        if (trials.size() > 2 && trials[0].size() > 0) {
+            try {
+                trial_duration = std::stoi(trials[0][0]);
+            } catch (const std::exception& e) {
+                std::cerr << "Error: trial_duration " << trials[0][0] << " is not a valid Integer: " << e.what() << std::endl;
+                exit(1);
+            }
 
-    auto trials = read_csv("", filename);
-    if (trials.size() > 2 && trials[0].size() > 0) {
-      try {
-        trial_duration = std::stoi(trials[0][0]);
-      } catch (std::exception e) {
-        std::cerr << "Error: trial_duration " << trials[0][0] << " is not a valid Integer.\n";
-        exit(1);
-      }
+            if (trials[0].size() > 1) {
+                try {
+                    thread_count = std::stoi(trials[0][1]);
+                } catch (const std::exception& e) {
+                    std::cerr << "Error: thread_count " << trials[0][1] << " is not a valid Integer: " << e.what() << std::endl;
+                    exit(1);
+                }
+            }
 
-      if (trials[0].size() > 1) {
-        try {
-          thread_count = std::stoi(trials[0][1]);
-        } catch (std::exception e) {
-          std::cerr << "Error: thread_count " << trials[0][1] << " is not a valid Integer.\n";
-          exit(1);
-        }
-      }
+            if (trials[1].size() > 0) {
+                trial_patient = trials[1][0];
+            }
 
-      if (trials[1].size() > 0) {
-          trial_patient = trials[1][0];
-      }
-
-      trials.erase(trials.begin(), trials.begin()+2);
-
-      biogears::ThreadPool pool{ thread_count };
-      auto channel = pool.get_source();
-
-      auto count = 1; //Danger 1 Indexed
-      std::stringstream ss;
-      for (auto& params : trials) {
-        if (params.size() >= 4) {
-          try {
-            std::string severity = params[0];
-            std::string plan = params[1];
-            double mic = std::stod(params[2]);
-            double apply_at = std::stod(params[3]);
-            double application_interval = std::stod(params[4]);
-
-            double duration = (params.size() > 4) ? std::stod(params[5])
-                                                  : trial_duration;
-            auto patient = (params.size() > 5) ? params[6]
-                                               : trial_patient;
-
-            auto patientFile = biogears::filesystem::path(patient);
-
-            PatientRun trial;
-            trial.patient_name(patient).patient_state(patientFile).infection_severity(severity).treatment_plan(plan);
-            trial.mic_g_Per_l(mic).apply_at_m(apply_at).apply_at_m(application_interval).duration_hr(duration);
-            channel->insert([=]() mutable { return trial.run(); });
-
-          } catch (std::exception) {
-            std::cerr << "Error: Malformed input skipping trial " << count << " with paramaters " << printVector(params) << "invalid double conversion.\n";
-            exit(1);
-          }
+            trials.erase(trials.begin(), trials.begin() + 2);
+            process_trials(trials, thread_count, trial_duration, trial_patient);
         } else {
-          std::cerr << "Warn: Skipping Malformed tria1 " << count << " with paramaters " << printVector(params) << "\n";
-          exit(1);
+            std::cerr << "Error: Malformed config file given." << std::endl;
+            exit(1);
         }
-        ++count;
-      }
-      pool.start();
-      while (!pool.stop_if_empty()) {
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(16ms);
-      }
-      pool.join();
-      exit(1);
+    } else if (args.MultiWordFound("TRIALS")) {
+        auto trials = args.MultiWord("TRIALS");
+        std::vector<std::vector<std::string>> parsed_trials;
+        for (const auto& trial : trials) {
+            parsed_trials.push_back(biogears::string_split(trial, ","));
+        }
+        process_trials(parsed_trials, thread_count, trial_duration, trial_patient);
     } else {
-      std::cerr << "Error: Malformed config file given.\n";
-      exit(1);
+        print_help();
     }
-  } else if (args.MultiWordFound("TRIALS")) {
-    auto trials = args.MultiWord("TRIALS");
-    biogears::ThreadPool pool{ thread_count };
-    auto channel = pool.get_source();
 
-    auto count = 1; //Danger 1 Indexed
-
-    for (auto& trial : trials) {
-      auto params = biogears::string_split(trial, ",");
-      if (params.size() >= 4) {
-        try {
-          std::string severity = params[0];
-          std::string plan = params[1];
-          double mic = std::stod(params[2]);
-          double apply_at = std::stod(params[3]);
-          double application_interval = std::stod(params[4]);
-
-          double duration = (params.size() > 4) ? std::stod(params[5])
-                                                : trial_duration;
-          auto patient = (params.size() > 5) ? params[6]
-                                             : trial_patient;
-
-          auto patientFile = biogears::filesystem::path(patient);
-          PatientRun trial;
-
-          trial.patient_name(patient).patient_state(patient).infection_severity(severity).treatment_plan(plan);
-          trial.mic_g_Per_l(mic).apply_at_m(apply_at).apply_at_m(application_interval).duration_hr(duration);
-
-          channel->insert([=]() mutable { return trial.run(); });
-
-        } catch (std::exception) {
-          std::cerr << "Error: Malformed input skipping trial " << count << " with paramaters " << trial << "invalid double conversion.\n";
-          exit(1);
-        }
-      } else {
-        std::cerr << "Warn: Skipping malformed trial set " << trial;
-      }
-      ++count;
-    }
-    pool.start();
-    while (!pool.stop_if_empty()) {
-      using namespace std::chrono_literals;
-      std::this_thread::sleep_for(16ms);
-    }
-    pool.join();
-    exit(1);
-  } else {
-    print_help();
-  }
+    return 0;
 }

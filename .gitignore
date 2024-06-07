@@ -13,3 +13,6 @@ CMakeUserPresets.json
 .vs/*
 .vscode/*
 worktrees/*
+
+# All contents except for the runtime/config
+runtime/*
