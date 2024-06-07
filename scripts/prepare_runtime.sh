@@ -5,3 +5,4 @@
 
 # 1. Generate the runtime folfer in the project root folder
 bg-cli generate runtime ../runtime
+cp ../config/population.template.xml ../runtime/config/population.template.xml

@@ -16,3 +16,17 @@ worktrees/*
 
 # All contents except for the runtime/config
 runtime/*
+
+*cmake*
+*Cmake*
+*CMake*
+*Make*
+
+projects/biogears/generated/*
+projects/cli/Debug/*
+projects/zip/minizip.pc
+projects/zip/unzip.h
+projects/zip/zip.h
+projects/zip/lib/zlib/Makefile
+projects/zip/lib/zlib/zconf.h
+projects/zip/lib/zlib/Makefile

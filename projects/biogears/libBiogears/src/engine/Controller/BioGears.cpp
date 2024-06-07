@@ -835,7 +835,7 @@ bool BioGears::SetupPatient()
 BioGears::~BioGears()
 {
   
-  m_Logger->FormatMessages(false);
+  // m_Logger->FormatMessages(false);
   m_Config = nullptr;
   m_SaturationCalculator = nullptr;
   m_DiffusionCalculator = nullptr;

@@ -227,7 +227,7 @@ void PatientRun::egdt_treatment()
     //"Just prior to septic shock onset, we administered two separate 500 mL boluses over the course of an hour."
     _Saline_bag->GetBagVolume().SetValue(1000, VolumeUnit::mL);
     _Saline_bag->GetRate().SetValue(500, VolumePerTimeUnit::mL_Per_hr);
-    _bg->ProcessAction(*_Saline_bag);
+    _bg->ProcessAction(*_Saline_bag); 
   } else {
 
     //REFRESH State graph. Refer to REFRESH.png in Source code
