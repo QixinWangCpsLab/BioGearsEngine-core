@@ -33,6 +33,7 @@
 #include <set>
 #include <strstream>
 #include <vector>
+#include <chrono>
 
 #include <biogears/string/manipulation.h>
 
@@ -394,7 +395,7 @@ eType generate_cdm_enum(std::set<std::string> key, DistributionCollection& colle
     auto& [key, distribution] = *ptr;
     auto roll_value = distribution(rd);
 
-    return eType::value(std::round(roll_value));
+    return typename eType::value(std::round(roll_value));
   }
 
   if (auto ptr = collection.weighted_discrete_distributions.find(key); ptr != collection.weighted_discrete_distributions.end()) {
@@ -408,26 +409,26 @@ eType generate_cdm_enum(std::set<std::string> key, DistributionCollection& colle
     auto& [key, distribution] = *ptr;
     auto roll_value = distribution(rd);
 
-    return eType::value(std::round(roll_value));
+    return typename eType::value(std::round(roll_value));
   }
 
   if (auto ptr = collection.discrete_uniform_distributions.find(key); ptr != collection.discrete_uniform_distributions.end()) {
     auto& [key, distribution] = *ptr;
     auto roll_value = distribution(rd);
 
-    return eType::value(roll_value);
+    return typename eType::value(roll_value);
   }
 
   if (auto ptr = collection.bernoulli_distributions.find(key); ptr != collection.bernoulli_distributions.end()) {
     auto& [key, distribution] = *ptr;
     auto roll_value = distribution(rd);
 
-    return eType::value(roll_value);
+    return typename eType::value(roll_value);
   }
 
   if (auto ptr = collection.sequence_values.find(key); ptr != collection.sequence_values.end()) {
     auto& [key, count] = *ptr;
-    return eType::value(count++);
+    return typename eType::value(count++);
   }
 
   if (auto ptr = collection.cycles_positions.find(key); ptr != collection.cycles_positions.end()) {
@@ -437,7 +438,7 @@ eType generate_cdm_enum(std::set<std::string> key, DistributionCollection& colle
     return eType(v);
   }
 
-  return eType::value(0);
+  return typename eType::value(0);
 }
 
 //-------------------------------------------------------------------------------
