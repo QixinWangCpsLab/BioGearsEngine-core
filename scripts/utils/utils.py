@@ -6,9 +6,9 @@ import pandas as pd
 os.chdir("/opt/biogears/core/runtime")
 
 # sepsis mic values candidates
-mic_sepsis_cands = ["0.016", "0.032", "0.008", "0.064"]
-severity_cands = ["None", "Low", "Mild", "Moderate", "Severe"]
-treatment_plan_cands = ["None", "REFRESH"]
+mic_sepsis_cands = ["8", "16"]
+severity_cands = ["Moderate", "Severe"]
+treatment_plan_cands = ["None"]
 antibiodelay_cands = ["46", "32"]
 treatmentinterv_cands = ["30", "60"]
 
