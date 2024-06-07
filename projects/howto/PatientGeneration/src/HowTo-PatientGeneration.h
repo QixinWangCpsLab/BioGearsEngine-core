@@ -15,6 +15,10 @@ specific language governing permissions and limitations under the License.
 #include "biogears/cdm/engine/PhysiologyEngine.h"
 #include "biogears/cdm/patient/actions/SESubstanceCompoundInfusion.h"
 #include "biogears/cdm/patient/actions/SESubstanceInfusion.h"
+#include "biogears/cdm/patient/assessments/SEArterialBloodGasAnalysis.h"
+#include "biogears/cdm/patient/assessments/SEComprehensiveMetabolicPanel.h"
+#include "biogears/cdm/patient/assessments/SEProthrombinTime.h"
+#include "biogears/cdm/patient/assessments/SECompleteBloodCount.h"
 #include <biogears/filesystem/path.h>
 
 
@@ -129,6 +133,7 @@ private:
   RefreshState _refresh_state = RefreshState::NONE;
   double _time_to_reassessment_min = 60.;
   double _maintenance_fluids_remaining_min = 0.;
+
   bool   _norepinphrine_titrate_active = false;
   double _time_since_norepinphrine_titrage_active_min = 0.0;
   double _treatment_time_remaining_min = 360;
@@ -140,4 +145,10 @@ private:
   double _high_map_count = 0.;
   double _time_to_full_assessment_min = 0.;
   double _persistant_normal_map_min = 0.;
+
+  // Added assessments
+  biogears::SEArterialBloodGasAnalysis _artbloodanalysis;
+  biogears::SEComprehensiveMetabolicPanel _comprehenmetabolicpanel;
+  biogears::SEProthrombinTime _ptt;
+  biogears::SECompleteBloodCount _cbc;
 };
