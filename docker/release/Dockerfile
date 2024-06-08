@@ -1,5 +1,5 @@
 # Base image
-FROM vscodeserver:latest
+FROM ubuntu:20.04
 ENV TZ=Asia/Hong_Kong
 
 # # COPY the resolv.conf from current folder to the container
