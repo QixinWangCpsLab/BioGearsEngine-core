@@ -122,6 +122,7 @@ private:
 
   double _time_remaining_min = 0.;
   double _time_since_feeding_min = 0.;
+  double _last_feed_time_s = 0.;
   double _time_since_antibiotic_treatment_min = 0.;
   double _time_applying_antibiotics_min = 0.;
 

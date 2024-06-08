@@ -1,4 +1,17 @@
-﻿#include <algorithm>
+﻿/**************************************************************************************
+Copyright 2015 Applied Research Associates, Inc.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the License
+at:
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+**************************************************************************************/
+
+
+#include <algorithm>
 #include <cctype>
 #include <random>
 #include <string>
@@ -227,7 +240,7 @@ void PatientRun::egdt_treatment()
     //"Just prior to septic shock onset, we administered two separate 500 mL boluses over the course of an hour."
     _Saline_bag->GetBagVolume().SetValue(1000, VolumeUnit::mL);
     _Saline_bag->GetRate().SetValue(500, VolumePerTimeUnit::mL_Per_hr);
-    _bg->ProcessAction(*_Saline_bag); 
+    _bg->ProcessAction(*_Saline_bag);
   } else {
 
     //REFRESH State graph. Refer to REFRESH.png in Source code
@@ -409,8 +422,8 @@ void PatientRun::egdt_treatment()
 //-------------------------------------------------------------------------------
 void PatientRun::nutrition_regimen()
 {
-  if (_time_since_feeding_min > hours(8)) {
-    _time_since_feeding_min -= hours(8);
+  if (_bg->GetSimulationTime(TimeUnit::s) - _last_feed_time_s > 8 * 60 * 60) {
+    _last_feed_time_s = _bg->GetSimulationTime(TimeUnit::s);
     SEConsumeNutrients meal;
     meal.GetNutrition().GetCarbohydrate().SetValue(50, MassUnit::g);
     meal.GetNutrition().GetFat().SetValue(10, MassUnit::g);
@@ -423,7 +436,6 @@ void PatientRun::nutrition_regimen()
     //meal.GetNutrition().GetProteinDigestionRate().SetValue(50, VolumeUnit::mL);
     _bg->ProcessAction(meal);
   }
-  _time_since_feeding_min += 1;
 }
 //-------------------------------------------------------------------------------
 /// \brief
@@ -685,6 +697,9 @@ PatientRun& PatientRun::treatment_plan(std::string treatment_plan)
   } else if (treatment_plan == "egdt") {
     _treatment_plan = TreatmentPlan::EGDT;
     _treatment_plan_str = "EGDT";
+  } else if  (treatment_plan == "none") {
+    _treatment_plan = TreatmentPlan::NONE;
+    _treatment_plan_str = "None";
   }
   return *this;
 }
