@@ -6,11 +6,11 @@ import pandas as pd
 os.chdir("/opt/biogears/core/runtime")
 
 # sepsis mic values candidates
-mic_sepsis_cands = ["8", "16"]
-severity_cands = ["Moderate", "Severe"]
-treatment_plan_cands = ["None"]
-antibiodelay_cands = ["46", "32"]
-treatmentinterv_cands = ["30", "60"]
+mic_sepsis_cands = ["8", "16", "4", "32"]
+severity_cands = ["Mild", "Moderate", "Severe"]
+treatment_plan_cands = ["None", "REFRESH", "EGDT"]
+antibiodelay_cands = ["46", "32", "16", "8"]
+treatmentinterv_cands = ["30", "60", "12"]
 
 
 # try to do the howto-PatientGeneration (multi threading)
