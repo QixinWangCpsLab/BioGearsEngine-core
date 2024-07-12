@@ -475,159 +475,225 @@ protected:
 class BIOGEARS_API SEInflammatoryResponse {
   friend io::Physiology;
 
-public:
-  SEInflammatoryResponse();
-  ~SEInflammatoryResponse();
+  public:
+    SEInflammatoryResponse();
+    ~SEInflammatoryResponse();
 
-  static size_t TypeHash() { return reinterpret_cast<size_t>(&TypeHash); }
-  static constexpr char const* const TypeTag() { return "SEInflammatoryResponse"; }
-  const char* classname() const { return TypeTag(); }
-  size_t hash_code() const { return TypeHash(); }
+    static size_t TypeHash() { return reinterpret_cast<size_t>(&TypeHash); }
+    static constexpr char const* const TypeTag() { return "SEInflammatoryResponse"; }
+    const char* classname() const { return TypeTag(); }
+    size_t hash_code() const { return TypeHash(); }
 
-  void Clear();
+    void Clear();
 
-  bool Load(const CDM::InflammatoryResponseData& in);
-  CDM::InflammatoryResponseData* Unload() const;
-  bool IsValid();
+    bool Load(const CDM::InflammatoryResponseData& in);
+    CDM::InflammatoryResponseData* Unload() const;
+    bool IsValid();
 
-  void Initialize();
-  const SEScalar* GetScalar(const char* name);
-  const SEScalar* GetScalar(const std::string& name);
+    void Initialize();
+    const SEScalar* GetScalar(const char* name);
+    const SEScalar* GetScalar(const std::string& name);
 
-  bool operator==(SEInflammatoryResponse const&) const;
-  bool operator!=(SEInflammatoryResponse const&) const;
+    bool operator==(SEInflammatoryResponse const&) const;
+    bool operator!=(SEInflammatoryResponse const&) const;
 
-protected:
-  void Unload(CDM::InflammatoryResponseData& data) const;
+  protected:
+    void Unload(CDM::InflammatoryResponseData& data) const;
 
-public:
-  bool HasLocalPathogen() const;
-  SEScalar& GetLocalPathogen();
-  double GetLocalPathogen() const;
+  public:
+    bool HasLocalPathogen() const;
+    SEScalar& GetLocalPathogen();
+    double GetLocalPathogen() const;
 
-  bool HasLocalBarrier() const;
-  SEScalar& GetLocalBarrier();
-  double GetLocalBarrier() const;
+    bool HasLocalBarrier() const;
+    SEScalar& GetLocalBarrier();
+    double GetLocalBarrier() const;
 
-  bool HasLocalMacrophage() const;
-  SEScalar& GetLocalMacrophage();
-  double GetLocalMacrophage() const;
+    bool HasLocalMacrophage() const;
+    SEScalar& GetLocalMacrophage();
+    double GetLocalMacrophage() const;
 
-  bool HasLocalNeutrophil() const;
-  SEScalar& GetLocalNeutrophil();
-  double GetLocalNeutrophil() const;
+    bool HasLocalNeutrophil() const;
+    SEScalar& GetLocalNeutrophil();
+    double GetLocalNeutrophil() const;
 
-  bool HasActiveTLR() const { return m_ActiveTLR == CDM::enumOnOff::value(-1) ? false : true; };
-  CDM::enumOnOff GetActiveTLR() { return m_ActiveTLR; };
-  void SetActiveTLR(CDM::enumOnOff value) { m_ActiveTLR = value; };
+    bool HasActiveTLR() const { return m_ActiveTLR == CDM::enumOnOff::value(-1) ? false : true; };
+    CDM::enumOnOff GetActiveTLR() { return m_ActiveTLR; };
+    void SetActiveTLR(CDM::enumOnOff value) { m_ActiveTLR = value; };
 
-  bool HasAutonomicResponseLevel() const;
-  SEScalar& GetAutonomicResponseLevel();
-  double GetAutonomicResponseLevel() const;
+    bool HasAutonomicResponseLevel() const;
+    SEScalar& GetAutonomicResponseLevel();
+    double GetAutonomicResponseLevel() const;
 
-  bool HasCatecholamines() const;
-  SEScalar& GetCatecholamines();
-  double GetCatecholamines() const;
+    bool HasCatecholamines() const;
+    SEScalar& GetCatecholamines();
+    double GetCatecholamines() const;
 
-  bool HasConstitutiveNOS() const;
-  SEScalar& GetConstitutiveNOS();
-  double GetConstitutiveNOS() const;
+    bool HasConstitutiveNOS() const;
+    SEScalar& GetConstitutiveNOS();
+    double GetConstitutiveNOS() const;
 
-  bool HasInducibleNOSPre() const;
-  SEScalar& GetInducibleNOSPre();
-  double GetInducibleNOSPre() const;
+    bool HasInducibleNOSPre() const;
+    SEScalar& GetInducibleNOSPre();
+    double GetInducibleNOSPre() const;
 
-  bool HasInducibleNOS() const;
-  SEScalar& GetInducibleNOS();
-  double GetInducibleNOS() const;
+    bool HasInducibleNOS() const;
+    SEScalar& GetInducibleNOS();
+    double GetInducibleNOS() const;
 
-  bool HasInterleukin6() const;
-  SEScalar& GetInterleukin6();
-  double GetInterleukin6() const;
+    bool HasInterleukin6() const;
+    SEScalar& GetInterleukin6();
+    double GetInterleukin6() const;
 
-  bool HasInterleukin10() const;
-  SEScalar& GetInterleukin10();
-  double GetInterleukin10() const;
+    bool HasInterleukin10() const;
+    SEScalar& GetInterleukin10();
+    double GetInterleukin10() const;
 
-  bool HasInterleukin12() const;
-  SEScalar& GetInterleukin12();
-  double GetInterleukin12() const;
+    bool HasInterleukin12() const;
+    SEScalar& GetInterleukin12();
+    double GetInterleukin12() const;
 
-  bool HasMacrophageResting() const;
-  SEScalar& GetMacrophageResting();
-  double GetMacrophageResting() const;
+    bool HasMacrophageResting() const;
+    SEScalar& GetMacrophageResting();
+    double GetMacrophageResting() const;
 
-  bool HasMacrophageActive() const;
-  SEScalar& GetMacrophageActive();
-  double GetMacrophageActive() const;
+    bool HasMacrophageActive() const;
+    SEScalar& GetMacrophageActive();
+    double GetMacrophageActive() const;
 
-  bool HasNeutrophilResting() const;
-  SEScalar& GetNeutrophilResting();
-  double GetNeutrophilResting() const;
+    bool HasNeutrophilResting() const;
+    SEScalar& GetNeutrophilResting();
+    double GetNeutrophilResting() const;
 
-  bool HasNeutrophilActive() const;
-  SEScalar& GetNeutrophilActive();
-  double GetNeutrophilActive() const;
+    bool HasNeutrophilActive() const;
+    SEScalar& GetNeutrophilActive();
+    double GetNeutrophilActive() const;
 
-  bool HasNitrate() const;
-  SEScalar& GetNitrate();
-  double GetNitrate() const;
+    bool HasNitrate() const;
+    SEScalar& GetNitrate();
+    double GetNitrate() const;
 
-  bool HasNitricOxide() const;
-  SEScalar& GetNitricOxide();
-  double GetNitricOxide() const;
+    bool HasNitricOxide() const;
+    SEScalar& GetNitricOxide();
+    double GetNitricOxide() const;
 
-  bool HasBloodPathogen() const;
-  SEScalar& GetBloodPathogen();
-  double GetBloodPathogen() const;
+    bool HasBloodPathogen() const;
+    SEScalar& GetBloodPathogen();
+    double GetBloodPathogen() const;
 
-  bool HasTissueIntegrity() const;
-  SEScalar0To1& GetTissueIntegrity();
-  double GetTissueIntegrity() const;
+    bool HasTissueIntegrity() const;
+    SEScalar0To1& GetTissueIntegrity();
+    double GetTissueIntegrity() const;
 
-  bool HasTrauma() const;
-  SEScalar& GetTrauma();
-  double GetTrauma() const;
+    bool HasTrauma() const;
+    SEScalar& GetTrauma();
+    double GetTrauma() const;
 
-  bool HasTumorNecrosisFactor() const;
-  SEScalar& GetTumorNecrosisFactor();
-  double GetTumorNecrosisFactor() const;
+    bool HasTumorNecrosisFactor() const;
+    SEScalar& GetTumorNecrosisFactor();
+    double GetTumorNecrosisFactor() const;
 
-  bool HasInflammationTime() const;
-  SEScalarTime& GetInflammationTime();
-  double GetInflammationTime(const TimeUnit& unit) const;
+    bool HasInflammationTime() const;
+    SEScalarTime& GetInflammationTime();
+    double GetInflammationTime(const TimeUnit& unit) const;
 
-  bool HasInflammationSources() const;
-  std::vector<CDM::enumInflammationSource>& GetInflammationSources();
-  bool HasInflammationSource(CDM::enumInflammationSource::value src);
+    bool HasInflammationSources() const;
+    std::vector<CDM::enumInflammationSource>& GetInflammationSources();
+    bool HasInflammationSource(CDM::enumInflammationSource::value src);
 
-  Tree<const char*> GetPhysiologyRequestGraph() const;
+    Tree<const char*> GetPhysiologyRequestGraph() const;
 
-protected:
-  SEScalar* m_LocalPathogen;
-  SEScalar* m_LocalMacrophage;
-  SEScalar* m_LocalNeutrophil;
-  SEScalar* m_LocalBarrier;
-  CDM::enumOnOff::value m_ActiveTLR;
-  SEScalar* m_AutonomicResponseLevel;
-  SEScalar* m_Catecholamines;
-  SEScalar* m_ConstitutiveNOS;
-  SEScalar* m_InducibleNOSPre;
-  SEScalar* m_InducibleNOS;
-  SEScalar* m_Interleukin6;
-  SEScalar* m_Interleukin10;
-  SEScalar* m_Interleukin12;
-  SEScalar* m_MacrophageResting;
-  SEScalar* m_MacrophageActive;
-  SEScalar* m_NeutrophilResting;
-  SEScalar* m_NeutrophilActive;
-  SEScalar* m_Nitrate;
-  SEScalar* m_NitricOxide;
-  SEScalar* m_BloodPathogen;
-  SEScalar0To1* m_TissueIntegrity;
-  SEScalar* m_Trauma;
-  SEScalar* m_TumorNecrosisFactor;
-  SEScalarTime* m_InflammationTime;
-  std::vector<CDM::enumInflammationSource> m_InflammationSources;
-};
+    double GenerateRandomAIRParam(double basevalue);
+
+  protected:
+    SEScalar* m_LocalPathogen;
+    SEScalar* m_LocalMacrophage;
+    SEScalar* m_LocalNeutrophil;
+    SEScalar* m_LocalBarrier;
+    CDM::enumOnOff::value m_ActiveTLR;
+    SEScalar* m_AutonomicResponseLevel;
+    SEScalar* m_Catecholamines;
+    SEScalar* m_ConstitutiveNOS;
+    SEScalar* m_InducibleNOSPre;
+    SEScalar* m_InducibleNOS;
+    SEScalar* m_Interleukin6;
+    SEScalar* m_Interleukin10;
+    SEScalar* m_Interleukin12;
+    SEScalar* m_MacrophageResting;
+    SEScalar* m_MacrophageActive;
+    SEScalar* m_NeutrophilResting;
+    SEScalar* m_NeutrophilActive;
+    SEScalar* m_Nitrate;
+    SEScalar* m_NitricOxide;
+    SEScalar* m_BloodPathogen;
+    SEScalar0To1* m_TissueIntegrity;
+    SEScalar* m_Trauma;
+    SEScalar* m_TumorNecrosisFactor;
+    SEScalarTime* m_InflammationTime;
+    std::vector<CDM::enumInflammationSource> m_InflammationSources;
+
+
+    // Below parameters are taken from the Inflammatory Response Function of Blood Chemestry Class
+    //------------------------------Model Parameters-----------------------------
+    double scale = 1.0; //This parameter can be set very high to investigate state equation trajectores (i.e. set to 60 to simulate 30 hrs in 30 min).  Note that there is no guarantee of validity of other BG outputs
+    //----Tissue parameters are taken from Dominguez2017Mathematical; kap = growth rate, psi = degradation rate, eps = inhibition, del = decay (other params defined)
+    //Tissue pathogen
+    double thetaP = 1.35e-4; //Rate of bacteria translocation from tissue to blood
+    double epsPB = 3.1, psiPM = 6.3e-3, psiPN = 6.1e-4, kapP = 0.6;
+    double uP = 3.7e4; //Saturation constant for bacteria
+    //Tissue macrophage
+    double Mv = 3.0e-1; //Resting macrophage pool
+    double delM = 6.4e-5, epsMB = 3.6e1;
+    double beta = 2.6e-2; //Activation of macrophages
+    //Tissue neutrophil
+    double Nv = 1e8; //Resting neutrophil pool
+    double delN = 6.1e-2, epsNB = 3.6e1, epsNM = 1.6e-1;
+    double alpha = 6.975e-7; //Activation of neutrophils
+    //Local barrier
+    double kapB = 4.6e-2, epsBP = 2.6e1, psiBP = 1.4e-1, psiBN = 4.0e-8;
+    //TLR switch
+    double pUpper = 2.0e6;
+    double pLower = 1.0e3;
+    //--Blood parameters are from Chow2005Diverse; kYZ = effect of Z on Y, xYZ = amount of Z to bring effect to half its max
+    //Blood Source terms
+    double sM = 1.0, sN = 1.0, s6 = 0.001, s10 = 0.01;
+    //Blood Pathogen parameters
+    double kPN = 5.8; //Phagocytic effect of activated neutrophils on pathogen, determined empirically
+    double xPN = 0.5; //Level of pathogen that brings elimination of P by neutrophils to 50% of max
+    double kPS = 6.9e3; //Background immune response to pathogen in blood
+    double xPS = 1.3e4; //Saturation of background immune response
+    //Trauma decay
+    double kTr = 0.0; //Base value--will be adjusted during burn/hemorrhage (see below)
+    double xTr = 0.67;
+    //Volume and blood pressure effect
+    double fB = 0.0; //0 except during hemorrhage
+    //Macrophage interaction
+    double kML = 1.01e2, kMTR = 0.04, kM6 = 0.1, kMB = 0.0495, kMR = 0.05, kMD = 0.05, xML = 37.5, xMD = 0.75, xMTNF = 0.4, xM6 = 1.0, xM10 = 0.297, xMCA = 0.9; //Note xMD was 1.0 for burn, see if this messes things up
+    //Activate macrophage interactions
+    double kMANO = 0.2, kMA = 0.2;
+    //Neutrophil interactions -- kN6 and kNTNF tuned for infection
+    double kNL = 3.375e1, kNTNF = 0.4, kN6 = 1.5, kNB = 0.1, kND = 0.05, kNTR = 0.02, kNTGF = 0.1, kNR = 0.05, kNNO = 0.4, kNA = 0.5, xNL = 56.25, xNTNF = 2.0, xN6 = 1.0, xND = 0.4, xN10 = 0.2; //xND was 0.4 for burn
+    //Inducible nitric oxide synthase
+    double kINOSN = 1.5, kINOSM = 0.1, kINOSEC = 0.1, kINOS6 = 2.0, kINOSd = 0.05, kINOS = 0.101, xINOS10 = 0.1, xINOSTNF = 0.05, xINOS6 = 0.1, xINOSNO = 0.3;
+    //Constituitive nitric oxide synthase
+    double kENOS = 4.0, kENOSEC = 0.05, xENOSTNF = 0.4, xENOSL = 1.015, xENOSTR = 0.1;
+    //Nitric oxide
+    double kNO3 = 0.46, kNOMA = 2.0;
+    //TNF
+    double kTNFN = 2.97, kTNFM = 0.1, kTNF = 1.4, xTNF6 = 0.059, xTNF10 = 0.079;
+    //IL6
+    double k6M = 3.03, k6TNF = 1.0, k62 = 3.4, k6NO = 2.97, k6 = 0.7, k6N = 0.2, x610 = 0.1782, x6TNF = 0.1, x66 = 0.5, x6NO = 0.4, h66 = 1.0;
+    //IL10
+    double k10MA = 0.1, k10N = 0.1, k10A = 62.87, k10TNF = 1.485, k106 = 0.051, k10 = 0.35, k10R = 0.1, x10TNF = 0.05, x1012 = 0.01, x106 = 0.08;
+    //CA
+    double kCA = 0.1, kCATR = 0.16;
+    //IL12
+    double k12M = 0.303, k12 = 0.05, x12TNF = 0.2, x126 = 0.2, x1210 = 0.2525;
+    //Autonomic response
+    double kAuto = 0.0, xAuto = 1.15;   //Base value--will be adjusted during burn/hemorrhage (see below)
+    //Damage
+    double kD6 = 0.125, kD = 0.15, kDB = 0.02, xD6 = 0.85, xDNO = 0.5, hD6 = 6.0;
+    double kDTR = 0.0; //This is a base value that will be adjusted as a function of type and severity of trauma
+    double tiMin = 0.2; //Minimum tissue integrity allowed
+  };
 }

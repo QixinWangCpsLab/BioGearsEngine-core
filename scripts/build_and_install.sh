@@ -21,7 +21,7 @@ mkdir -p /opt/biogears/core/build/projects/biogears/generated/Release/biogears/s
 mkdir -p /opt/biogears/core/build/projects/biogears/generated/Release/biogears/schema/biogears
 
 # Then build and install
-cd ../build && cmake --build . --target howto-patientgeneration -j 18 && cmake --install .
+cd ../build && cmake --build . -j 18 && cmake --install .
 
 # move the folders of biogears to usr
 cp -r /root/biogears/* /usr && rm -rf /root/biogears
