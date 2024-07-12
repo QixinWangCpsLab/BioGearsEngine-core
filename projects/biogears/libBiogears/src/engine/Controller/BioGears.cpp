@@ -137,6 +137,8 @@ void BioGears::SetUp()
   m_DiffusionCalculator = DiffusionCalculator::make_unique(*this);
 }
 
+// MARK: This is the location where systems are explicitly initialized which might be possible to pass some
+// parameters to the intialization process
 bool BioGears::Initialize(const PhysiologyEngineConfiguration* config)
 {
   m_State = EngineState::NotReady;
