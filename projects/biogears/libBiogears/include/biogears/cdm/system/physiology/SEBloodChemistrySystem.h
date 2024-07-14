@@ -605,34 +605,7 @@ class BIOGEARS_API SEInflammatoryResponse {
 
     double GenerateRandomAIRParam(double basevalue);
 
-  protected:
-    SEScalar* m_LocalPathogen;
-    SEScalar* m_LocalMacrophage;
-    SEScalar* m_LocalNeutrophil;
-    SEScalar* m_LocalBarrier;
-    CDM::enumOnOff::value m_ActiveTLR;
-    SEScalar* m_AutonomicResponseLevel;
-    SEScalar* m_Catecholamines;
-    SEScalar* m_ConstitutiveNOS;
-    SEScalar* m_InducibleNOSPre;
-    SEScalar* m_InducibleNOS;
-    SEScalar* m_Interleukin6;
-    SEScalar* m_Interleukin10;
-    SEScalar* m_Interleukin12;
-    SEScalar* m_MacrophageResting;
-    SEScalar* m_MacrophageActive;
-    SEScalar* m_NeutrophilResting;
-    SEScalar* m_NeutrophilActive;
-    SEScalar* m_Nitrate;
-    SEScalar* m_NitricOxide;
-    SEScalar* m_BloodPathogen;
-    SEScalar0To1* m_TissueIntegrity;
-    SEScalar* m_Trauma;
-    SEScalar* m_TumorNecrosisFactor;
-    SEScalarTime* m_InflammationTime;
-    std::vector<CDM::enumInflammationSource> m_InflammationSources;
-
-
+    // Temporally move the inflammation params to public for now
     // Below parameters are taken from the Inflammatory Response Function of Blood Chemestry Class
     //------------------------------Model Parameters-----------------------------
     double scale = 1.0; //This parameter can be set very high to investigate state equation trajectores (i.e. set to 60 to simulate 30 hrs in 30 min).  Note that there is no guarantee of validity of other BG outputs
@@ -695,5 +668,32 @@ class BIOGEARS_API SEInflammatoryResponse {
     double kD6 = 0.125, kD = 0.15, kDB = 0.02, xD6 = 0.85, xDNO = 0.5, hD6 = 6.0;
     double kDTR = 0.0; //This is a base value that will be adjusted as a function of type and severity of trauma
     double tiMin = 0.2; //Minimum tissue integrity allowed
+
+  protected:
+    SEScalar* m_LocalPathogen;
+    SEScalar* m_LocalMacrophage;
+    SEScalar* m_LocalNeutrophil;
+    SEScalar* m_LocalBarrier;
+    CDM::enumOnOff::value m_ActiveTLR;
+    SEScalar* m_AutonomicResponseLevel;
+    SEScalar* m_Catecholamines;
+    SEScalar* m_ConstitutiveNOS;
+    SEScalar* m_InducibleNOSPre;
+    SEScalar* m_InducibleNOS;
+    SEScalar* m_Interleukin6;
+    SEScalar* m_Interleukin10;
+    SEScalar* m_Interleukin12;
+    SEScalar* m_MacrophageResting;
+    SEScalar* m_MacrophageActive;
+    SEScalar* m_NeutrophilResting;
+    SEScalar* m_NeutrophilActive;
+    SEScalar* m_Nitrate;
+    SEScalar* m_NitricOxide;
+    SEScalar* m_BloodPathogen;
+    SEScalar0To1* m_TissueIntegrity;
+    SEScalar* m_Trauma;
+    SEScalar* m_TumorNecrosisFactor;
+    SEScalarTime* m_InflammationTime;
+    std::vector<CDM::enumInflammationSource> m_InflammationSources;
   };
 }
