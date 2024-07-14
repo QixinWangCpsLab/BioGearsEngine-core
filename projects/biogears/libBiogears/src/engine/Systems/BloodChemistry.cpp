@@ -1485,67 +1485,124 @@ void BloodChemistry::InflammatoryResponse()
   TR = m_InflammatoryResponse->GetTrauma().GetValue(); //Trauma
   iTime = m_InflammatoryResponse->GetInflammationTime(TimeUnit::hr);
 
-  //------------------------------Model Parameters-----------------------------
-  double scale = 1.0; //This parameter can be set very high to investigate state equation trajectores (i.e. set to 60 to simulate 30 hrs in 30 min).  Note that there is no guarantee of validity of other BG outputs
-  //----Tissue parameters are taken from Dominguez2017Mathematical; kap = growth rate, psi = degradation rate, eps = inhibition, del = decay (other params defined)
-  //Tissue pathogen
-  double thetaP = 1.35e-4; //Rate of bacteria translocation from tissue to blood
-  double epsPB = 3.1, psiPM = 6.3e-3, psiPN = 6.1e-4, kapP = 0.6;
-  double uP = 3.7e4; //Saturation constant for bacteria
-  //Tissue macrophage
-  double Mv = 3.0e-1; //Resting macrophage pool
-  double delM = 6.4e-5, epsMB = 3.6e1;
-  double beta = 2.6e-2; //Activation of macrophages
-  //Tissue neutrophil
-  double Nv = 1e8; //Resting neutrophil pool
-  double delN = 6.1e-2, epsNB = 3.6e1, epsNM = 1.6e-1;
-  double alpha = 6.975e-7; //Activation of neutrophils
-  //Local barrier
-  double kapB = 4.6e-2, epsBP = 2.6e1, psiBP = 1.4e-1, psiBN = 4.0e-8;
-  //TLR switch
-  double pUpper = 2.0e6;
-  double pLower = 1.0e3;
-  //--Blood parameters are from Chow2005Diverse; kYZ = effect of Z on Y, xYZ = amount of Z to bring effect to half its max
-  //Blood Source terms
-  double sM = 1.0, sN = 1.0, s6 = 0.001, s10 = 0.01;
-  //Blood Pathogen parameters
-  double kPN = 5.8; //Phagocytic effect of activated neutrophils on pathogen, determined empirically
-  double xPN = 0.5; //Level of pathogen that brings elimination of P by neutrophils to 50% of max
-  double kPS = 6.9e3; //Background immune response to pathogen in blood
-  double xPS = 1.3e4; //Saturation of background immune response
-  //Trauma decay
-  double kTr = 0.0; //Base value--will be adjusted during burn/hemorrhage (see below)
-  double xTr = 0.67;
-  //Volume and blood pressure effect
-  double fB = 0.0; //0 except during hemorrhage
-  //Macrophage interaction
-  double kML = 1.01e2, kMTR = 0.04, kM6 = 0.1, kMB = 0.0495, kMR = 0.05, kMD = 0.05, xML = 37.5, xMD = 0.75, xMTNF = 0.4, xM6 = 1.0, xM10 = 0.297, xMCA = 0.9; //Note xMD was 1.0 for burn, see if this messes things up
-  //Activate macrophage interactions
-  double kMANO = 0.2, kMA = 0.2;
-  //Neutrophil interactions -- kN6 and kNTNF tuned for infection
-  double kNL = 3.375e1, kNTNF = 0.4, kN6 = 1.5, kNB = 0.1, kND = 0.05, kNTR = 0.02, kNTGF = 0.1, kNR = 0.05, kNNO = 0.4, kNA = 0.5, xNL = 56.25, xNTNF = 2.0, xN6 = 1.0, xND = 0.4, xN10 = 0.2; //xND was 0.4 for burn
-  //Inducible nitric oxide synthase
-  double kINOSN = 1.5, kINOSM = 0.1, kINOSEC = 0.1, kINOS6 = 2.0, kINOSd = 0.05, kINOS = 0.101, xINOS10 = 0.1, xINOSTNF = 0.05, xINOS6 = 0.1, xINOSNO = 0.3;
-  //Constituitive nitric oxide synthase
-  double kENOS = 4.0, kENOSEC = 0.05, xENOSTNF = 0.4, xENOSL = 1.015, xENOSTR = 0.1;
-  //Nitric oxide
-  double kNO3 = 0.46, kNOMA = 2.0;
-  //TNF
-  double kTNFN = 2.97, kTNFM = 0.1, kTNF = 1.4, xTNF6 = 0.059, xTNF10 = 0.079;
-  //IL6
-  double k6M = 3.03, k6TNF = 1.0, k62 = 3.4, k6NO = 2.97, k6 = 0.7, k6N = 0.2, x610 = 0.1782, x6TNF = 0.1, x66 = 0.5, x6NO = 0.4, h66 = 1.0;
-  //IL10
-  double k10MA = 0.1, k10N = 0.1, k10A = 62.87, k10TNF = 1.485, k106 = 0.051, k10 = 0.35, k10R = 0.1, x10TNF = 0.05, x1012 = 0.01, x106 = 0.08;
-  //CA
-  double kCA = 0.1, kCATR = 0.16;
-  //IL12
-  double k12M = 0.303, k12 = 0.05, x12TNF = 0.2, x126 = 0.2, x1210 = 0.2525;
-  //Autonomic response
-  double kAuto = 0.0, xAuto = 1.15;   //Base value--will be adjusted during burn/hemorrhage (see below)
-  //Damage
-  double kD6 = 0.125, kD = 0.15, kDB = 0.02, xD6 = 0.85, xDNO = 0.5, hD6 = 6.0;
-  double kDTR = 0.0; //This is a base value that will be adjusted as a function of type and severity of trauma
-  double tiMin = 0.2; //Minimum tissue integrity allowed
+  SEInflammatoryResponse inflammatoryresponse = *m_InflammatoryResponse;
+
+  //------------------Model Parameters--------------------------------------
+  double kDTR = inflammatoryresponse.kDTR;
+  double kTr = inflammatoryresponse.kTr;
+  double tiMin = inflammatoryresponse.tiMin;
+  double kD6 = inflammatoryresponse.kD6;
+  double xD6 = inflammatoryresponse.xD6;
+  double kD = inflammatoryresponse.kD;
+  double kNTNF = inflammatoryresponse.kNTNF;
+  double kN6 = inflammatoryresponse.kN6;
+  double hD6 = inflammatoryresponse.hD6;
+  double h66 = inflammatoryresponse.h66;
+  double x1210 = inflammatoryresponse.x1210;
+  double scale = 1.0;
+  double fB = inflammatoryresponse.fB;
+  double pUpper = inflammatoryresponse.pUpper;
+  double pLower = inflammatoryresponse.pLower;
+  double kapP = inflammatoryresponse.kapP;
+  double thetaP = inflammatoryresponse.thetaP;
+  double psiPN = inflammatoryresponse.psiPN;
+  double psiPM = inflammatoryresponse.psiPM;
+  double uP = inflammatoryresponse.uP;
+  double epsPB = inflammatoryresponse.epsPB;
+  double beta = inflammatoryresponse.beta;
+  double xTr = inflammatoryresponse.xTr;
+  double kAuto = inflammatoryresponse.kAuto;
+  double xAuto = inflammatoryresponse.xAuto;
+  double delM = inflammatoryresponse.delM;
+  double epsMB = inflammatoryresponse.epsMB;
+  double Mv = inflammatoryresponse.Mv;
+  double alpha = inflammatoryresponse.alpha;
+  double Nv = inflammatoryresponse.Nv;
+  double epsNB = inflammatoryresponse.epsNB;
+  double epsNM = inflammatoryresponse.epsNM;
+  double delN = inflammatoryresponse.delN;
+  double kapB = inflammatoryresponse.kapB;
+  double epsBP = inflammatoryresponse.epsBP;
+  double psiBP = inflammatoryresponse.psiBP;
+  double psiBN = inflammatoryresponse.psiBN;
+  double kPS = inflammatoryresponse.kPS;
+  double xPS = inflammatoryresponse.xPS;
+  double kPN = inflammatoryresponse.kPN;
+  double xPN = inflammatoryresponse.xPN;
+  double kML = inflammatoryresponse.kML;
+  double xML = inflammatoryresponse.xML;
+  double kMD = inflammatoryresponse.kMD;
+  double xMD = inflammatoryresponse.xMD;
+  double xMTNF = inflammatoryresponse.xMTNF;
+  double kM6 = inflammatoryresponse.kM6;
+  double kNL = inflammatoryresponse.kNL;
+  double xNL = inflammatoryresponse.xNL;
+  double xNTNF = inflammatoryresponse.xNTNF;
+  double kINOS = inflammatoryresponse.kINOS;
+  double kINOSN = inflammatoryresponse.kINOSN;
+  double kINOSM = inflammatoryresponse.kINOSM;
+  double kINOSEC = inflammatoryresponse.kINOSEC;
+  double xINOSTNF = inflammatoryresponse.xINOSTNF;
+  double kINOS6 = inflammatoryresponse.kINOS6;
+  double xN6 = inflammatoryresponse.xN6;
+  double kMTR = inflammatoryresponse.kMTR;
+  double xM6 = inflammatoryresponse.xM6;
+  double kMB = inflammatoryresponse.kMB;
+  double xM10 = inflammatoryresponse.xM10;
+  double kMR = inflammatoryresponse.kMR;
+  double sM = inflammatoryresponse.sM;
+  double kMA = inflammatoryresponse.kMA;
+  double kNTR = inflammatoryresponse.kNTR;
+  double kNB = inflammatoryresponse.kNB;
+  double kNB = inflammatoryresponse.kNB;
+  double kND = inflammatoryresponse.kND;
+  double xND = inflammatoryresponse.xND;
+  double xN10 = inflammatoryresponse.xN10;
+  double kNR = inflammatoryresponse.kNR;
+  double sN = inflammatoryresponse.sN;
+  double kNA = inflammatoryresponse.kNA;
+  double kENOSEC = inflammatoryresponse.kENOSEC;
+  double xENOSTNF = inflammatoryresponse.xENOSTNF;
+  double kNO3 = inflammatoryresponse.kNO3;
+  double xINOS6 = inflammatoryresponse.xINOS6;
+  double xINOS10 = inflammatoryresponse.xINOS10;
+  double xINOSNO = inflammatoryresponse.xINOSNO;
+  double kINOSd = inflammatoryresponse.kINOSd;
+  double xENOSL = inflammatoryresponse.xENOSL;
+  double xENOSTR = inflammatoryresponse.xENOSTR;
+  double xTNF10 = inflammatoryresponse.xTNF10;
+  double xTNF6 = inflammatoryresponse.xTNF6;
+  double kTNF = inflammatoryresponse.kTNF;
+  double x6TNF = inflammatoryresponse.x6TNF;
+  double k6NO = inflammatoryresponse.k6NO;
+  double x6NO = inflammatoryresponse.x6NO;
+  double x10TNF = inflammatoryresponse.x10TNF;
+  double k106 = inflammatoryresponse.k106;
+  double x106 = inflammatoryresponse.x106;
+  double kTNFN = inflammatoryresponse.kTNFN;
+  double k6N = inflammatoryresponse.k6N;
+  double kTNFM = inflammatoryresponse.kTNFM;
+  double k6M = inflammatoryresponse.k6M;
+  double k6TNF = inflammatoryresponse.k6TNF;
+  double kENOS = inflammatoryresponse.kENOS;
+  double x610 = inflammatoryresponse.x610;
+  double k10R = inflammatoryresponse.k10R;
+  double x1012 = inflammatoryresponse.x1012;
+  double x66 = inflammatoryresponse.x66;
+  double k6 = inflammatoryresponse.k6;
+  double s6 = inflammatoryresponse.s6;
+  double k10 = inflammatoryresponse.k10;
+  double s10 = inflammatoryresponse.s10;
+  double k10N = inflammatoryresponse.k10N;
+  double k10MA = inflammatoryresponse.k10MA;
+  double k10TNF = inflammatoryresponse.k10TNF;
+  double k12M = inflammatoryresponse.k12M;
+  double k12 = inflammatoryresponse.k12;
+  double kCATR = inflammatoryresponse.kCATR;
+  double kCA = inflammatoryresponse.kCA;
+  double kDB = inflammatoryresponse.kDB;
+  double xDNO = inflammatoryresponse.xDNO;
+  double kNOMA = inflammatoryresponse.kNOMA;
 
   //Antibiotic effects
   double antibacterialEffect = m_data.GetDrugs().GetAntibioticActivity().GetValue();
