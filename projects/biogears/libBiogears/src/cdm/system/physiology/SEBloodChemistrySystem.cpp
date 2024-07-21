@@ -24,6 +24,7 @@ specific language governing permissions and limitations under the License.
 #include <biogears/cdm/substance/SESubstanceManager.h>
 #include <biogears/container/Tree.tci.h>
 #include <random>
+#include <iostream>
 
 namespace biogears {
 constexpr char idArterialBloodPH[] = "ArterialBloodPH";
@@ -1500,6 +1501,9 @@ SEInflammatoryResponse::SEInflammatoryResponse()
   , m_TumorNecrosisFactor(nullptr)
   // Below lines are added configurations for MIC Parameters Storage
 {
+  psiPN = GenerateRandomAIRParam(psiPN);
+  k6M = GenerateRandomAIRParam(k6M);
+  x66 = GenerateRandomAIRParam(x66);
 }
 //-------------------------------------------------------------------------------
 SEInflammatoryResponse::~SEInflammatoryResponse()
@@ -1530,7 +1534,7 @@ void SEInflammatoryResponse::Clear()
   SAFE_DELETE(m_Nitrate);
   SAFE_DELETE(m_NitricOxide);
   SAFE_DELETE(m_BloodPathogen);
-  SAFE_DELETE(m_TissueIntegrity);
+  // SAFE_DELETE(m_TissueIntegrity);
   SAFE_DELETE(m_Trauma);
   SAFE_DELETE(m_TumorNecrosisFactor);
   m_InflammationSources.clear();
@@ -1661,130 +1665,6 @@ void SEInflammatoryResponse::Initialize()
   GetCatecholamines().SetValue(0.0);
   GetTissueIntegrity().SetValue(1.0);
   GetInflammationTime().SetValue(0.0, TimeUnit::s);
-
-  // Temporally randomly set the Inflammatory Response Process, to test the 
-  // Variability of the results
-  thetaP = GenerateRandomAIRParam(thetaP);
-  epsPB = GenerateRandomAIRParam(epsPB);
-  psiPM = GenerateRandomAIRParam(psiPM);
-  psiPN = GenerateRandomAIRParam(psiPN);
-  kapP = GenerateRandomAIRParam(kapP);
-  uP = GenerateRandomAIRParam(uP);
-  Mv = GenerateRandomAIRParam(Mv);
-  delM = GenerateRandomAIRParam(delM);
-  epsMB = GenerateRandomAIRParam(epsMB);
-  beta = GenerateRandomAIRParam(beta);
-  Nv = GenerateRandomAIRParam(Nv);
-  delN = GenerateRandomAIRParam(delN);
-  epsNB = GenerateRandomAIRParam(epsNB);
-  epsNM = GenerateRandomAIRParam(epsNM);
-  alpha = GenerateRandomAIRParam(alpha);
-  kapB = GenerateRandomAIRParam(kapB);
-  epsBP = GenerateRandomAIRParam(epsBP);
-  psiBP = GenerateRandomAIRParam(psiBP);
-  psiBN = GenerateRandomAIRParam(psiBN);
-  pUpper = GenerateRandomAIRParam(pUpper);
-  pLower = GenerateRandomAIRParam(pLower);
-  sM = GenerateRandomAIRParam(sM);
-  sN = GenerateRandomAIRParam(sN);
-  s6 = GenerateRandomAIRParam(s6);
-  s10 = GenerateRandomAIRParam(s10);
-  kPN = GenerateRandomAIRParam(kPN);
-  xPN = GenerateRandomAIRParam(xPN);
-  kPS = GenerateRandomAIRParam(kPS);
-  xPS = GenerateRandomAIRParam(xPS);
-  kTr = GenerateRandomAIRParam(kTr);
-  xTr = GenerateRandomAIRParam(xTr);
-  fB = GenerateRandomAIRParam(fB);
-  kML = GenerateRandomAIRParam(kML);
-  kMTR = GenerateRandomAIRParam(kMTR);
-  kM6 = GenerateRandomAIRParam(kM6);
-  kMB = GenerateRandomAIRParam(kMB);
-  kMR = GenerateRandomAIRParam(kMR);
-  kMD = GenerateRandomAIRParam(kMD);
-  xML = GenerateRandomAIRParam(xML);
-  xMD = GenerateRandomAIRParam(xMD);
-  xMTNF = GenerateRandomAIRParam(xMTNF);
-  xM6 = GenerateRandomAIRParam(xM6);
-  xM10 = GenerateRandomAIRParam(xM10);
-  xMCA = GenerateRandomAIRParam(xMCA);
-  kMANO = GenerateRandomAIRParam(kMANO);
-  kMA = GenerateRandomAIRParam(kMA);
-  kNL = GenerateRandomAIRParam(kNL);
-  kNTNF = GenerateRandomAIRParam(kNTNF);
-  kN6 = GenerateRandomAIRParam(kN6);
-  kNB = GenerateRandomAIRParam(kNB);
-  kND = GenerateRandomAIRParam(kND);
-  kNTR = GenerateRandomAIRParam(kNTR);
-  kNTGF = GenerateRandomAIRParam(kNTGF);
-  kNR = GenerateRandomAIRParam(kNR);
-  kNNO = GenerateRandomAIRParam(kNNO);
-  kNA = GenerateRandomAIRParam(kNA);
-  xNL = GenerateRandomAIRParam(xNL);
-  xNTNF = GenerateRandomAIRParam(xNTNF);
-  xN6 = GenerateRandomAIRParam(xN6);
-  xND = GenerateRandomAIRParam(xND);
-  xN10 = GenerateRandomAIRParam(xN10);
-  kINOSN = GenerateRandomAIRParam(kINOSN);
-  kINOSM = GenerateRandomAIRParam(kINOSM);
-  kINOSEC = GenerateRandomAIRParam(kINOSEC);
-  kINOS6 = GenerateRandomAIRParam(kINOS6);
-  kINOSd = GenerateRandomAIRParam(kINOSd);
-  kINOS = GenerateRandomAIRParam(kINOS);
-  xINOS10 = GenerateRandomAIRParam(xINOS10);
-  xINOSTNF = GenerateRandomAIRParam(xINOSTNF);
-  xINOS6 = GenerateRandomAIRParam(xINOS6);
-  xINOSNO = GenerateRandomAIRParam(xINOSNO);
-  kENOS = GenerateRandomAIRParam(kENOS);
-  kENOSEC = GenerateRandomAIRParam(kENOSEC);
-  xENOSTNF = GenerateRandomAIRParam(xENOSTNF);
-  xENOSL = GenerateRandomAIRParam(xENOSL);
-  xENOSTR = GenerateRandomAIRParam(xENOSTR);
-  kNO3 = GenerateRandomAIRParam(kNO3);
-  kNOMA = GenerateRandomAIRParam(kNOMA);
-  kTNFN = GenerateRandomAIRParam(kTNFN);
-  kTNFM = GenerateRandomAIRParam(kTNFM);
-  kTNF = GenerateRandomAIRParam(kTNF);
-  xTNF6 = GenerateRandomAIRParam(xTNF6);
-  xTNF10 = GenerateRandomAIRParam(xTNF10);
-  k6M = GenerateRandomAIRParam(k6M);
-  k6TNF = GenerateRandomAIRParam(k6TNF);
-  k62 = GenerateRandomAIRParam(k62);
-  k6NO = GenerateRandomAIRParam(k6NO);
-  k6 = GenerateRandomAIRParam(k6);
-  k6N = GenerateRandomAIRParam(k6N);
-  x610 = GenerateRandomAIRParam(x610);
-  x6TNF = GenerateRandomAIRParam(x6TNF);
-  x66 = GenerateRandomAIRParam(x66);
-  x6NO = GenerateRandomAIRParam(x6NO);
-  h66 = GenerateRandomAIRParam(h66);
-  k10MA = GenerateRandomAIRParam(k10MA);
-  k10N = GenerateRandomAIRParam(k10N);
-  k10A = GenerateRandomAIRParam(k10A);
-  k10TNF = GenerateRandomAIRParam(k10TNF);
-  k106 = GenerateRandomAIRParam(k106);
-  k10 = GenerateRandomAIRParam(k10);
-  k10R = GenerateRandomAIRParam(k10R);
-  x10TNF = GenerateRandomAIRParam(x10TNF);
-  x1012 = GenerateRandomAIRParam(x1012);
-  x106 = GenerateRandomAIRParam(x106);
-  kCA = GenerateRandomAIRParam(kCA);
-  kCATR = GenerateRandomAIRParam(kCATR);
-  k12M = GenerateRandomAIRParam(k12M);
-  k12 = GenerateRandomAIRParam(k12);
-  x12TNF = GenerateRandomAIRParam(x12TNF);
-  x126 = GenerateRandomAIRParam(x126);
-  x1210 = GenerateRandomAIRParam(x1210);
-  kAuto = GenerateRandomAIRParam(kAuto);
-  xAuto = GenerateRandomAIRParam(xAuto);
-  kD6 = GenerateRandomAIRParam(kD6);
-  kD = GenerateRandomAIRParam(kD);
-  kDB = GenerateRandomAIRParam(kDB);
-  xD6 = GenerateRandomAIRParam(xD6);
-  xDNO = GenerateRandomAIRParam(xDNO);
-  hD6 = GenerateRandomAIRParam(hD6);
-  kDTR = GenerateRandomAIRParam(kDTR);
-  tiMin = GenerateRandomAIRParam(tiMin);
 }
 //-------------------------------------------------------------------------------
 bool SEInflammatoryResponse::IsValid()
@@ -2355,8 +2235,8 @@ bool SEInflammatoryResponse::HasTissueIntegrity() const
 //-------------------------------------------------------------------------------
 SEScalar0To1& SEInflammatoryResponse::GetTissueIntegrity()
 {
-  if (m_TissueIntegrity == nullptr) {
-    m_TissueIntegrity = new SEScalar0To1();
+  if (!m_TissueIntegrity) {
+      m_TissueIntegrity = std::make_unique<SEScalar0To1>(); 
   }
   return *m_TissueIntegrity;
 }

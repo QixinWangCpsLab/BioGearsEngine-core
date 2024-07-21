@@ -36,6 +36,8 @@ foreach( p IN LISTS CMAKE_PREFIX_PATH )
 endforeach()
 
 find_package(Git QUIET)
+find_package(Threads REQUIRED)
+
 configure_version_information(GIT_SUCESS MAJOR 8 MINOR 0 PATCH 0 TWEAK "Source" )
 if(GIT_FOUND AND NOT GIT_SUCESS)
   # Update these variables to ensure out of source build have some sane tags

@@ -1485,7 +1485,7 @@ void BloodChemistry::InflammatoryResponse()
   TR = m_InflammatoryResponse->GetTrauma().GetValue(); //Trauma
   iTime = m_InflammatoryResponse->GetInflammationTime(TimeUnit::hr);
 
-  SEInflammatoryResponse inflammatoryresponse = *m_InflammatoryResponse;
+  SEInflammatoryResponse& inflammatoryresponse = *m_InflammatoryResponse;
 
   //------------------Model Parameters--------------------------------------
   double kDTR = inflammatoryresponse.kDTR;
@@ -1553,7 +1553,6 @@ void BloodChemistry::InflammatoryResponse()
   double sM = inflammatoryresponse.sM;
   double kMA = inflammatoryresponse.kMA;
   double kNTR = inflammatoryresponse.kNTR;
-  double kNB = inflammatoryresponse.kNB;
   double kNB = inflammatoryresponse.kNB;
   double kND = inflammatoryresponse.kND;
   double xND = inflammatoryresponse.xND;

@@ -690,7 +690,7 @@ class BIOGEARS_API SEInflammatoryResponse {
     SEScalar* m_Nitrate;
     SEScalar* m_NitricOxide;
     SEScalar* m_BloodPathogen;
-    SEScalar0To1* m_TissueIntegrity;
+    std::unique_ptr<SEScalar0To1> m_TissueIntegrity;
     SEScalar* m_Trauma;
     SEScalar* m_TumorNecrosisFactor;
     SEScalarTime* m_InflammationTime;
