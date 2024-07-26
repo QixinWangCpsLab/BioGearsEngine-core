@@ -1608,7 +1608,46 @@ void BloodChemistry::InflammatoryResponse()
     dPT = 0.0;
   }
   dMT = beta * NT / (1.0 + epsMB * B) * Mv - delM * MT;
-  dNT = alpha * R * Nv / ((1.0 + epsNB * B) * (1.0 + epsNM * MT)) - delN * NT;
+
+  // Here we add a randomized (randomized in object creation time) delay to this formula
+  // Explain: The effect of MT to NT is delayed randomly
+  // First get current time 
+  // Currently, for simplicity, we only add one delay for MT
+  double time_s_now = m_data.GetSimulationTime().GetValue(TimeUnit::s);
+  double MT_refined;
+  double NT_refined;
+  double INOS_refined;
+  if (time_s_now < m_InflammatoryResponse->GetLocalMacrophageDelay_s())
+  {
+    // Update the MT history
+    std::unique_ptr<SEScalarWithTimeStamp> localmacrophagehistory = std::make_unique<SEScalarWithTimeStamp>();
+    localmacrophagehistory->SetValue(MT);
+    localmacrophagehistory->SetTimeStamp(time_s_now);
+    m_InflammatoryResponse->GetLocalMacrophageHistorys().push(std::move(localmacrophagehistory));
+  } else {
+    double time_s_delayed = time_s_now - m_InflammatoryResponse->GetLocalMacrophageDelay_s();
+    // Update the delayed effect, but first check whether current_time_s - history_time_s == delay_time_s
+    if (time_s_delayed > (m_InflammatoryResponse->GetLocalMacrophageDelay_s() + 100) | (time_s_delayed < (m_InflammatoryResponse->GetLocalMacrophageDelay_s() - 100)))
+    {
+      // Raise an error
+      Error("BloodChemistry::InflammatoryResponse() - Delayed effect time is not correct");
+    }
+
+    // Update the history values, push the new value at the end and pop the value at the begining
+    // First create the new value
+    std::unique_ptr<SEScalarWithTimeStamp> localmacrophagehistory = std::make_unique<SEScalarWithTimeStamp>();
+    localmacrophagehistory->SetValue(MT);
+    localmacrophagehistory->SetTimeStamp(time_s_now);
+    m_InflammatoryResponse->GetLocalMacrophageHistorys().push(std::move(localmacrophagehistory));
+    // assign the MT_refined value for current timestamp formula updates
+    MT_refined = m_InflammatoryResponse->GetLocalNeutrophilHistorys().front()->GetValue();
+    // Now remove the first value
+    m_InflammatoryResponse->GetLocalNeutrophilHistorys().pop();
+  }
+
+  // dNT = alpha * R * Nv / ((1.0 + epsNB * B) * (1.0 + epsNM * MT)) - delN * NT;
+  // Change the dNT to version using the delayed effect
+  dNT = alpha * R * Nv / ((1.0 + epsNB * B) * (1.0 + epsNM * MT_refined)) - delN * NT_refined;
   dB = kapB / (1.0 + epsBP * R) * B * (1.0 - B) - psiBP * R * B - psiBN * NT * B;
   dPB = (kapP - antibacterialEffect) * PB + thetaP * PT / (1.0 + epsPB * B) - kPS * PB / (xPS + PB) - kPN * NA * GeneralMath::HillActivation(PB, xPN, 2.0);
   dTR = -kTr * TR; //This is assumed to be the driving force for burn

@@ -35,108 +35,221 @@ public:
 };
 
 class BIOGEARS_API SEScalar : public SEProperty {
-protected:
-  double m_value;
-  bool m_readOnly;
+  protected:
+    double m_value;
+    bool m_readOnly;
 
-public:
-  friend io::Property;
-  SEScalar();
-  SEScalar(double v, bool ro=false);
+  public:
+    friend io::Property;
+    SEScalar();
+    SEScalar(double v, bool ro=false);
 
-  virtual ~SEScalar();
+    virtual ~SEScalar();
 
-  virtual void Clear();
-  /**
-  Sets the value to NaN and removes the unit
-  Note that this does not affect bounds
-  */
-  virtual void Invalidate();
-  virtual void Load(const CDM::ScalarData& in, std::default_random_engine *rd = nullptr);
-  virtual CDM::ScalarData* Unload() const;
+    virtual void Clear();
+    /**
+    Sets the value to NaN and removes the unit
+    Note that this does not affect bounds
+    */
+    virtual void Invalidate();
+    virtual void Load(const CDM::ScalarData& in, std::default_random_engine *rd = nullptr);
+    virtual CDM::ScalarData* Unload() const;
 
-  /**
-   * Copies ONLY the value and unit
-   * ONLY if the provided scalar is valid.
-   */
-  bool Set(const SEScalar& s);
+    /**
+     * Copies ONLY the value and unit
+     * ONLY if the provided scalar is valid.
+     */
+    bool Set(const SEScalar& s);
 
-  /**
-   * Copies the entire contents
-   * of the provided scalar to this.
-   * Even if s is invalid.
-   */
-  void Copy(const SEScalar& s);
+    /**
+     * Copies the entire contents
+     * of the provided scalar to this.
+     * Even if s is invalid.
+     */
+    void Copy(const SEScalar& s);
 
-  virtual bool IsValid() const;
-  bool IsInfinity() const { return std::isinf(m_value); }
+    virtual bool IsValid() const;
+    bool IsInfinity() const { return std::isinf(m_value); }
 
-  bool IsPositive() const;
-  bool IsNegative() const;
-  bool IsZero(double limit = ZERO_APPROX) const;
+    bool IsPositive() const;
+    bool IsNegative() const;
+    bool IsZero(double limit = ZERO_APPROX) const;
 
-  void SetReadOnly(bool b);
-  bool IsReadOnly() const;
+    void SetReadOnly(bool b);
+    bool IsReadOnly() const;
 
-  virtual double GetValue() const;
-  virtual void SetValue(double d);
+    virtual double GetValue() const;
+    virtual void SetValue(double d);
 
-  double Increment(const SEScalar& s);
-  double IncrementValue(double d);
-  double Decrement(const SEScalar& s);
-  double DecrementValue(double d);
-  double Multiply(const SEScalar& s);
-  double MultiplyValue(double d);
-  double Divide(const SEScalar& s);
-  double DivideValue(double d);
+    double Increment(const SEScalar& s);
+    double IncrementValue(double d);
+    double Decrement(const SEScalar& s);
+    double DecrementValue(double d);
+    double Multiply(const SEScalar& s);
+    double MultiplyValue(double d);
+    double Divide(const SEScalar& s);
+    double DivideValue(double d);
 
-  bool Equals(const SEScalar& to) const;
+    bool Equals(const SEScalar& to) const;
 
-  virtual std::string ToString() const;
+    virtual std::string ToString() const;
 
-  static double dNaN();
-  static double NaN;
-  static bool IsZero(double value, double limit);
-  static bool IsValue(double target, double value);
+    static double dNaN();
+    static double NaN;
+    static bool IsZero(double value, double limit);
+    static bool IsValue(double target, double value);
 
-  static const std::string unitless;
+    static const std::string unitless;
 
-  SEScalar& operator=(const SEScalar& rhs);
+    SEScalar& operator=(const SEScalar& rhs);
 
-  bool operator<(const SEScalar& rhs) const;
-  bool operator<=(const SEScalar& rhs) const;
-  bool operator>(const SEScalar& rhs) const;
-  bool operator>=(const SEScalar& rhs) const;
+    bool operator<(const SEScalar& rhs) const;
+    bool operator<=(const SEScalar& rhs) const;
+    bool operator>(const SEScalar& rhs) const;
+    bool operator>=(const SEScalar& rhs) const;
 
-  bool operator==(const SEScalar& rhs) const { return Equals(rhs); }
-  bool operator!=(const SEScalar& rhs) const { return !Equals(rhs); }
+    bool operator==(const SEScalar& rhs) const { return Equals(rhs); }
+    bool operator!=(const SEScalar& rhs) const { return !Equals(rhs); }
 
-  SEScalar operator+(const SEScalar& rhs) const;
-  SEScalar& operator+=(const SEScalar& rhs);
-  SEScalar operator-(const SEScalar& rhs) const;
-  SEScalar& operator-=(const SEScalar& rhs);
-  SEScalar operator/(const SEScalar& rhs) const;
-  SEScalar& operator/=(const SEScalar& rhs);
-  SEScalar operator*(const SEScalar& rhs) const;
-  SEScalar& operator*=(const SEScalar& rhs);
+    SEScalar operator+(const SEScalar& rhs) const;
+    SEScalar& operator+=(const SEScalar& rhs);
+    SEScalar operator-(const SEScalar& rhs) const;
+    SEScalar& operator-=(const SEScalar& rhs);
+    SEScalar operator/(const SEScalar& rhs) const;
+    SEScalar& operator/=(const SEScalar& rhs);
+    SEScalar operator*(const SEScalar& rhs) const;
+    SEScalar& operator*=(const SEScalar& rhs);
 
 
-protected:
-  virtual void Unload(CDM::ScalarData& s) const;
+  protected:
+    virtual void Unload(CDM::ScalarData& s) const;
 };
+
+
+class SEScalarWithTimeStamp : public SEScalar {
+  protected:
+    double m_timeStamp_s;
+
+  public:
+    SEScalarWithTimeStamp();
+    SEScalarWithTimeStamp(double v, double ts, bool ro=false);
+
+    double GetTimeStamp() const;
+    void SetTimeStamp(double ts);
+
+    SEScalarWithTimeStamp& operator=(const SEScalarWithTimeStamp& rhs);
+
+    bool operator<(const SEScalarWithTimeStamp& rhs) const;
+    bool operator<=(const SEScalarWithTimeStamp& rhs) const;
+    bool operator>(const SEScalarWithTimeStamp& rhs) const;
+    bool operator>=(const SEScalarWithTimeStamp& rhs) const;
+
+    bool operator==(const SEScalarWithTimeStamp& rhs) const { return Equals(rhs); }
+    bool operator!=(const SEScalarWithTimeStamp& rhs) const { return !Equals(rhs); }
+
+    SEScalarWithTimeStamp operator+(const SEScalarWithTimeStamp& rhs) const;
+    SEScalarWithTimeStamp& operator+=(const SEScalarWithTimeStamp& rhs);
+    SEScalarWithTimeStamp operator-(const SEScalarWithTimeStamp& rhs) const;
+    SEScalarWithTimeStamp& operator-=(const SEScalarWithTimeStamp& rhs);
+    SEScalarWithTimeStamp operator/(const SEScalarWithTimeStamp& rhs) const;
+    SEScalarWithTimeStamp& operator/=(const SEScalarWithTimeStamp& rhs);
+    SEScalarWithTimeStamp operator*(const SEScalarWithTimeStamp& rhs) const;
+    SEScalarWithTimeStamp& operator*=(const SEScalarWithTimeStamp& rhs);
+};
+
 //-------------------------------------------------------------------------------
-inline SEScalar operator+(double lhs, const SEScalar& rhs) { return SEScalar { lhs }.Increment(rhs); };
-inline SEScalar operator-(double lhs, const SEScalar& rhs) { return SEScalar { lhs }.Decrement(rhs); };
-inline SEScalar operator/(double lhs, const SEScalar& rhs) { return SEScalar { lhs }.Divide(rhs); };
-inline SEScalar operator*(double lhs, const SEScalar& rhs) { return SEScalar { lhs }.Multiply(rhs); };
-inline bool operator<(double lhs, const SEScalar& rhs) { return SEScalar { lhs } < rhs; };
-inline bool operator<=(double lhs, const SEScalar& rhs) { return SEScalar { lhs } <= rhs; };
-inline bool operator>(double lhs, const SEScalar& rhs) { return SEScalar { lhs } > rhs; };
-inline bool operator>=(double lhs, const SEScalar& rhs) { return SEScalar { lhs } >= rhs; };
-inline bool operator==(double lhs, const SEScalar& rhs) { return rhs.operator==(lhs); }
-inline bool operator!=(double lhs, const SEScalar& rhs) { return rhs.operator!=(lhs); }
+// inline SEScalar operator+(double lhs, const SEScalar& rhs) { return SEScalar { lhs }.Increment(rhs); };
+// inline SEScalar operator-(double lhs, const SEScalar& rhs) { return SEScalar { lhs }.Decrement(rhs); };
+// inline SEScalar operator/(double lhs, const SEScalar& rhs) { return SEScalar { lhs }.Divide(rhs); };
+// inline SEScalar operator*(double lhs, const SEScalar& rhs) { return SEScalar { lhs }.Multiply(rhs); };
+// inline bool operator<(double lhs, const SEScalar& rhs) { return SEScalar { lhs } < rhs; };
+// inline bool operator<=(double lhs, const SEScalar& rhs) { return SEScalar { lhs } <= rhs; };
+// inline bool operator>(double lhs, const SEScalar& rhs) { return SEScalar { lhs } > rhs; };
+// inline bool operator>=(double lhs, const SEScalar& rhs) { return SEScalar { lhs } >= rhs; };
+// inline bool operator==(double lhs, const SEScalar& rhs) { return rhs.operator==(lhs); }
+// inline bool operator!=(double lhs, const SEScalar& rhs) { return rhs.operator!=(lhs); }
+
+// Type trait to check if Scalar is either SEScalar or SEScalarWithTimestamp
+template<typename T>
+struct is_valid_scalar : std::disjunction<
+  std::is_base_of<SEScalar, T>
+> {};
+
+// Below we re-write the inline functions using templates to handle both the SEScalar and SEScalarWithTimestamp cases
+// Templated operator+ function
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline Scalar operator+(double lhs, const Scalar& rhs) {
+    return Scalar{lhs}.Increment(rhs);
+}
+
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline Scalar operator-(double lhs, const Scalar& rhs) {
+  return Scalar { lhs }.Decrement(rhs);
+}
+
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline Scalar operator*(double lhs, const Scalar& rhs) {
+  return Scalar { lhs }.Multiply(rhs);
+}
+
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline Scalar operator/(double lhs, const Scalar& rhs) {
+  return Scalar { lhs }.Divide(rhs);
+} 
+
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline bool operator<(double lhs, const Scalar& rhs) {
+  return Scalar { lhs } < rhs;
+}
+
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline bool operator<=(double lhs, const Scalar& rhs) {
+  return Scalar { lhs } <= rhs;
+}
+
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline bool operator>(double lhs, const Scalar& rhs) {
+  return Scalar { lhs } > rhs;
+}
+
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline bool operator>=(double lhs, const Scalar& rhs) {
+  return Scalar { lhs } >= rhs;
+}
+
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline bool operator==(double lhs, const Scalar& rhs) {
+  return Scalar { lhs } == rhs;
+}
+
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline bool operator!=(double lhs, const Scalar& rhs) {
+  return Scalar { lhs } != rhs;
+}
+
+// template <typename Scalar> inline Scalar operator-(double lhs, const Scalar& rhs) {return Scalar { lhs }.Decrement(rhs); };
+// template <typename Scalar> inline Scalar operator/(double lhs, const Scalar& rhs) {return Scalar { lhs }.Divide(rhs); };
+// template <typename Scalar> inline Scalar operator*(double lhs, const Scalar& rhs) {return Scalar { lhs }.Multiply(rhs); };
+// template <typename Scalar> inline bool operator<(double lhs, const Scalar& rhs) {return Scalar { lhs } < rhs; };
+// template <typename Scalar> inline bool operator<=(double lhs, const Scalar& rhs) {return Scalar { lhs } <= rhs; };
+// template <typename Scalar> inline bool operator>(double lhs, const Scalar& rhs) {return Scalar { lhs } > rhs; };
+// template <typename Scalar> inline bool operator>=(double lhs, const Scalar& rhs) {return Scalar { lhs } >= rhs; };
+// template <typename Scalar> inline bool operator==(double lhs, const Scalar& rhs) {return rhs.operator==(lhs); }
+// template <typename Scalar> inline bool operator!=(double lhs, const Scalar& rhs) {return rhs.operator!=(lhs); }
+
 //-------------------------------------------------------------------------------
-inline std::ostream& operator<<(std::ostream& out, const SEScalar* s)
+// inline std::ostream& operator<<(std::ostream& out, const SEScalar* s)
+// {
+//   if (s == nullptr)
+//     out << SEScalar::NaN;
+//   else
+//     out << (*s).ToString();
+//   return out;
+// }
+
+// Constrain the template using std::enable_if
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline std::ostream& operator<<(std::ostream& out, const Scalar* s)
 {
   if (s == nullptr)
     out << SEScalar::NaN;
@@ -144,12 +257,22 @@ inline std::ostream& operator<<(std::ostream& out, const SEScalar* s)
     out << (*s).ToString();
   return out;
 }
+
 //-------------------------------------------------------------------------------
-inline std::ostream& operator<<(std::ostream& out, const SEScalar& s)
+// inline std::ostream& operator<<(std::ostream& out, const SEScalar& s)
+// {
+//   out << s.ToString();
+//   return out;
+// }
+
+// Change it to template function ver
+template <typename Scalar, typename = std::enable_if_t<std::is_base_of_v<SEScalar, Scalar>>>
+inline std::ostream&  operator<<(std::ostream& out, const Scalar& s)
 {
   out << s.ToString();
   return out;
 }
+
 inline void Override(const SEScalar& from, SEScalar& to)
 {
   bool b = to.IsReadOnly();
@@ -166,6 +289,7 @@ inline void ValueOverride(SEScalar& s, double value)
   s.SetValue(value);
   s.SetReadOnly(b);
 }
+
 //-------------------------------------------------------------------------------
 inline void IncrementOverride(SEScalar& s, double value)
 {

@@ -23,6 +23,7 @@ specific language governing permissions and limitations under the License.
 #include <biogears/cdm/properties/SEScalarVolume.h>
 #include <biogears/cdm/substance/SESubstanceManager.h>
 #include <biogears/container/Tree.tci.h>
+#include <random>
 
 namespace biogears {
 constexpr char idArterialBloodPH[] = "ArterialBloodPH";
@@ -1498,6 +1499,9 @@ SEInflammatoryResponse::SEInflammatoryResponse()
   , m_Trauma(nullptr)
   , m_TumorNecrosisFactor(nullptr)
 {
+  // Here in order to make sure that for every time we create the SEInflammatoryResponse, the delays are randomized, we do the randomization here (although it is not 
+  // very standard
+  InitializeDelays();
 }
 //-------------------------------------------------------------------------------
 SEInflammatoryResponse::~SEInflammatoryResponse()
@@ -2322,4 +2326,43 @@ bool SEInflammatoryResponse::operator!=(SEInflammatoryResponse const& rhs) const
   return !(*this == rhs);
 }
 //-------------------------------------------------------------------------------
+
+// Below are added newly developed functions
+void SEInflammatoryResponse::InitializeDelays()
+{
+  std::random_device rd;
+  std::mt19937 gen(rd());
+
+  std::uniform_int_distribution<> distr(3600, 10800);
+
+  m_LocalNeutrophil_Delay_s = distr(gen);
+  m_LocalMacrophage_Delay_s = distr(gen);
+  m_InducibleNOS_Delay_s = distr(gen);
+}
+
+const int SEInflammatoryResponse::GetLocalNeutrophilDelay_s() const
+{
+  return m_LocalNeutrophil_Delay_s;
+}
+
+const int SEInflammatoryResponse::GetLocalMacrophageDelay_s() const
+{
+  return m_LocalMacrophage_Delay_s;
+}
+
+std::queue<std::unique_ptr<SEScalarWithTimeStamp>>& SEInflammatoryResponse::GetLocalNeutrophilHistorys()
+{
+  return m_LocalNeutrophilHistorys;
+}
+
+std::queue<std::unique_ptr<SEScalarWithTimeStamp>>& SEInflammatoryResponse::GetLocalMacrophageHistorys()
+{
+  return m_LocalMacrophageHistorys;
+}
+
+std::queue<std::unique_ptr<SEScalarWithTimeStamp>>& SEInflammatoryResponse::GetInducibleNOSHistorys()
+{
+  return m_InducibleNOSHistorys;
+}
+
 }

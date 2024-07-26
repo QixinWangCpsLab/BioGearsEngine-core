@@ -15,6 +15,8 @@ specific language governing permissions and limitations under the License.
 #include <biogears/cdm/system/SESystem.h>
 #include <biogears/exports.h>
 #include <biogears/schema/biogears/BioGearsPhysiology.hxx>
+#include <biogears/cdm/properties/SEScalar.h>
+#include <queue>
 
 namespace biogears {
 class SEScalar;
@@ -475,159 +477,181 @@ protected:
 class BIOGEARS_API SEInflammatoryResponse {
   friend io::Physiology;
 
-public:
-  SEInflammatoryResponse();
-  ~SEInflammatoryResponse();
+  public:
+    SEInflammatoryResponse();
+    ~SEInflammatoryResponse();
 
-  static size_t TypeHash() { return reinterpret_cast<size_t>(&TypeHash); }
-  static constexpr char const* const TypeTag() { return "SEInflammatoryResponse"; }
-  const char* classname() const { return TypeTag(); }
-  size_t hash_code() const { return TypeHash(); }
+    static size_t TypeHash() { return reinterpret_cast<size_t>(&TypeHash); }
+    static constexpr char const* const TypeTag() { return "SEInflammatoryResponse"; }
+    const char* classname() const { return TypeTag(); }
+    size_t hash_code() const { return TypeHash(); }
 
-  void Clear();
+    void Clear();
 
-  bool Load(const CDM::InflammatoryResponseData& in);
-  CDM::InflammatoryResponseData* Unload() const;
-  bool IsValid();
+    bool Load(const CDM::InflammatoryResponseData& in);
+    CDM::InflammatoryResponseData* Unload() const;
+    bool IsValid();
 
-  void Initialize();
-  const SEScalar* GetScalar(const char* name);
-  const SEScalar* GetScalar(const std::string& name);
+    void Initialize();
+    const SEScalar* GetScalar(const char* name);
+    const SEScalar* GetScalar(const std::string& name);
 
-  bool operator==(SEInflammatoryResponse const&) const;
-  bool operator!=(SEInflammatoryResponse const&) const;
+    bool operator==(SEInflammatoryResponse const&) const;
+    bool operator!=(SEInflammatoryResponse const&) const;
 
-protected:
-  void Unload(CDM::InflammatoryResponseData& data) const;
+  protected:
+    void Unload(CDM::InflammatoryResponseData& data) const;
 
-public:
-  bool HasLocalPathogen() const;
-  SEScalar& GetLocalPathogen();
-  double GetLocalPathogen() const;
+  public:
+    bool HasLocalPathogen() const;
+    SEScalar& GetLocalPathogen();
+    double GetLocalPathogen() const;
 
-  bool HasLocalBarrier() const;
-  SEScalar& GetLocalBarrier();
-  double GetLocalBarrier() const;
+    bool HasLocalBarrier() const;
+    SEScalar& GetLocalBarrier();
+    double GetLocalBarrier() const;
 
-  bool HasLocalMacrophage() const;
-  SEScalar& GetLocalMacrophage();
-  double GetLocalMacrophage() const;
+    bool HasLocalMacrophage() const;
+    SEScalar& GetLocalMacrophage();
+    double GetLocalMacrophage() const;
 
-  bool HasLocalNeutrophil() const;
-  SEScalar& GetLocalNeutrophil();
-  double GetLocalNeutrophil() const;
+    bool HasLocalNeutrophil() const;
+    SEScalar& GetLocalNeutrophil();
+    double GetLocalNeutrophil() const;
 
-  bool HasActiveTLR() const { return m_ActiveTLR == CDM::enumOnOff::value(-1) ? false : true; };
-  CDM::enumOnOff GetActiveTLR() { return m_ActiveTLR; };
-  void SetActiveTLR(CDM::enumOnOff value) { m_ActiveTLR = value; };
+    bool HasActiveTLR() const { return m_ActiveTLR == CDM::enumOnOff::value(-1) ? false : true; };
+    CDM::enumOnOff GetActiveTLR() { return m_ActiveTLR; };
+    void SetActiveTLR(CDM::enumOnOff value) { m_ActiveTLR = value; };
 
-  bool HasAutonomicResponseLevel() const;
-  SEScalar& GetAutonomicResponseLevel();
-  double GetAutonomicResponseLevel() const;
+    bool HasAutonomicResponseLevel() const;
+    SEScalar& GetAutonomicResponseLevel();
+    double GetAutonomicResponseLevel() const;
 
-  bool HasCatecholamines() const;
-  SEScalar& GetCatecholamines();
-  double GetCatecholamines() const;
+    bool HasCatecholamines() const;
+    SEScalar& GetCatecholamines();
+    double GetCatecholamines() const;
 
-  bool HasConstitutiveNOS() const;
-  SEScalar& GetConstitutiveNOS();
-  double GetConstitutiveNOS() const;
+    bool HasConstitutiveNOS() const;
+    SEScalar& GetConstitutiveNOS();
+    double GetConstitutiveNOS() const;
 
-  bool HasInducibleNOSPre() const;
-  SEScalar& GetInducibleNOSPre();
-  double GetInducibleNOSPre() const;
+    bool HasInducibleNOSPre() const;
+    SEScalar& GetInducibleNOSPre();
+    double GetInducibleNOSPre() const;
 
-  bool HasInducibleNOS() const;
-  SEScalar& GetInducibleNOS();
-  double GetInducibleNOS() const;
+    bool HasInducibleNOS() const;
+    SEScalar& GetInducibleNOS();
+    double GetInducibleNOS() const;
 
-  bool HasInterleukin6() const;
-  SEScalar& GetInterleukin6();
-  double GetInterleukin6() const;
+    bool HasInterleukin6() const;
+    SEScalar& GetInterleukin6();
+    double GetInterleukin6() const;
 
-  bool HasInterleukin10() const;
-  SEScalar& GetInterleukin10();
-  double GetInterleukin10() const;
+    bool HasInterleukin10() const;
+    SEScalar& GetInterleukin10();
+    double GetInterleukin10() const;
 
-  bool HasInterleukin12() const;
-  SEScalar& GetInterleukin12();
-  double GetInterleukin12() const;
+    bool HasInterleukin12() const;
+    SEScalar& GetInterleukin12();
+    double GetInterleukin12() const;
 
-  bool HasMacrophageResting() const;
-  SEScalar& GetMacrophageResting();
-  double GetMacrophageResting() const;
+    bool HasMacrophageResting() const;
+    SEScalar& GetMacrophageResting();
+    double GetMacrophageResting() const;
 
-  bool HasMacrophageActive() const;
-  SEScalar& GetMacrophageActive();
-  double GetMacrophageActive() const;
+    bool HasMacrophageActive() const;
+    SEScalar& GetMacrophageActive();
+    double GetMacrophageActive() const;
 
-  bool HasNeutrophilResting() const;
-  SEScalar& GetNeutrophilResting();
-  double GetNeutrophilResting() const;
+    bool HasNeutrophilResting() const;
+    SEScalar& GetNeutrophilResting();
+    double GetNeutrophilResting() const;
 
-  bool HasNeutrophilActive() const;
-  SEScalar& GetNeutrophilActive();
-  double GetNeutrophilActive() const;
+    bool HasNeutrophilActive() const;
+    SEScalar& GetNeutrophilActive();
+    double GetNeutrophilActive() const;
 
-  bool HasNitrate() const;
-  SEScalar& GetNitrate();
-  double GetNitrate() const;
+    bool HasNitrate() const;
+    SEScalar& GetNitrate();
+    double GetNitrate() const;
 
-  bool HasNitricOxide() const;
-  SEScalar& GetNitricOxide();
-  double GetNitricOxide() const;
+    bool HasNitricOxide() const;
+    SEScalar& GetNitricOxide();
+    double GetNitricOxide() const;
 
-  bool HasBloodPathogen() const;
-  SEScalar& GetBloodPathogen();
-  double GetBloodPathogen() const;
+    bool HasBloodPathogen() const;
+    SEScalar& GetBloodPathogen();
+    double GetBloodPathogen() const;
 
-  bool HasTissueIntegrity() const;
-  SEScalar0To1& GetTissueIntegrity();
-  double GetTissueIntegrity() const;
+    bool HasTissueIntegrity() const;
+    SEScalar0To1& GetTissueIntegrity();
+    double GetTissueIntegrity() const;
 
-  bool HasTrauma() const;
-  SEScalar& GetTrauma();
-  double GetTrauma() const;
+    bool HasTrauma() const;
+    SEScalar& GetTrauma();
+    double GetTrauma() const;
 
-  bool HasTumorNecrosisFactor() const;
-  SEScalar& GetTumorNecrosisFactor();
-  double GetTumorNecrosisFactor() const;
+    bool HasTumorNecrosisFactor() const;
+    SEScalar& GetTumorNecrosisFactor();
+    double GetTumorNecrosisFactor() const;
 
-  bool HasInflammationTime() const;
-  SEScalarTime& GetInflammationTime();
-  double GetInflammationTime(const TimeUnit& unit) const;
+    bool HasInflammationTime() const;
+    SEScalarTime& GetInflammationTime();
+    double GetInflammationTime(const TimeUnit& unit) const;
 
-  bool HasInflammationSources() const;
-  std::vector<CDM::enumInflammationSource>& GetInflammationSources();
-  bool HasInflammationSource(CDM::enumInflammationSource::value src);
+    bool HasInflammationSources() const;
+    std::vector<CDM::enumInflammationSource>& GetInflammationSources();
+    bool HasInflammationSource(CDM::enumInflammationSource::value src);
 
-  Tree<const char*> GetPhysiologyRequestGraph() const;
+    void InitializeDelays();  // Currently we intend to just do the random initialization to simplify the development
 
-protected:
-  SEScalar* m_LocalPathogen;
-  SEScalar* m_LocalMacrophage;
-  SEScalar* m_LocalNeutrophil;
-  SEScalar* m_LocalBarrier;
-  CDM::enumOnOff::value m_ActiveTLR;
-  SEScalar* m_AutonomicResponseLevel;
-  SEScalar* m_Catecholamines;
-  SEScalar* m_ConstitutiveNOS;
-  SEScalar* m_InducibleNOSPre;
-  SEScalar* m_InducibleNOS;
-  SEScalar* m_Interleukin6;
-  SEScalar* m_Interleukin10;
-  SEScalar* m_Interleukin12;
-  SEScalar* m_MacrophageResting;
-  SEScalar* m_MacrophageActive;
-  SEScalar* m_NeutrophilResting;
-  SEScalar* m_NeutrophilActive;
-  SEScalar* m_Nitrate;
-  SEScalar* m_NitricOxide;
-  SEScalar* m_BloodPathogen;
-  SEScalar0To1* m_TissueIntegrity;
-  SEScalar* m_Trauma;
-  SEScalar* m_TumorNecrosisFactor;
-  SEScalarTime* m_InflammationTime;
-  std::vector<CDM::enumInflammationSource> m_InflammationSources;
-};
+    const int GetLocalNeutrophilDelay_s() const;
+    const int GetLocalMacrophageDelay_s() const;
+    const int GetInducibleNOSDelay_s() const;
+
+    std::queue<std::unique_ptr<SEScalarWithTimeStamp>>& GetLocalNeutrophilHistorys();
+    std::queue<std::unique_ptr<SEScalarWithTimeStamp>>& GetLocalMacrophageHistorys();
+    std::queue<std::unique_ptr<SEScalarWithTimeStamp>>& GetInducibleNOSHistorys();
+
+    Tree<const char*> GetPhysiologyRequestGraph() const;
+
+  protected:
+    SEScalar* m_LocalPathogen;
+    SEScalar* m_LocalMacrophage;
+    SEScalar* m_LocalNeutrophil;
+    SEScalar* m_LocalBarrier;
+    CDM::enumOnOff::value m_ActiveTLR;
+    SEScalar* m_AutonomicResponseLevel;
+    SEScalar* m_Catecholamines;
+    SEScalar* m_ConstitutiveNOS;
+    SEScalar* m_InducibleNOSPre;
+    SEScalar* m_InducibleNOS;
+    SEScalar* m_Interleukin6;
+    SEScalar* m_Interleukin10;
+    SEScalar* m_Interleukin12;
+    SEScalar* m_MacrophageResting;
+    SEScalar* m_MacrophageActive;
+    SEScalar* m_NeutrophilResting;
+    SEScalar* m_NeutrophilActive;
+    SEScalar* m_Nitrate;
+    SEScalar* m_NitricOxide;
+    SEScalar* m_BloodPathogen;
+    SEScalar0To1* m_TissueIntegrity;
+    SEScalar* m_Trauma;
+    SEScalar* m_TumorNecrosisFactor;
+    SEScalarTime* m_InflammationTime;
+    std::vector<CDM::enumInflammationSource> m_InflammationSources;
+
+    // Below lines for storage of the history values of some state variables
+    // std::unique_ptr<SEScalarWithTimeStamp> m_LocalNeutrophilHistory;
+    // std::unique_ptr<SEScalarWithTimeStamp> m_LocalMacrophageHistory;
+    // std::unique_ptr<SEScalarWithTimeStamp> m_InducibleNOSHistory;
+    std::queue<std::unique_ptr<SEScalarWithTimeStamp>> m_LocalNeutrophilHistorys;
+    std::queue<std::unique_ptr<SEScalarWithTimeStamp>> m_LocalMacrophageHistorys;
+    std::queue<std::unique_ptr<SEScalarWithTimeStamp>> m_InducibleNOSHistorys;
+
+    int m_LocalNeutrophil_Delay_s;
+    int m_LocalMacrophage_Delay_s;
+    int m_InducibleNOS_Delay_s;
+  };
 }
