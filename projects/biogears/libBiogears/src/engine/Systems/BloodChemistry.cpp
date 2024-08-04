@@ -1624,15 +1624,8 @@ void BloodChemistry::InflammatoryResponse()
     localmacrophagehistory->SetValue(MT);
     localmacrophagehistory->SetTimeStamp(time_s_now);
     m_InflammatoryResponse->GetLocalMacrophageHistorys().push(std::move(localmacrophagehistory));
+    MT_refined = MT;
   } else {
-    double time_s_delayed = time_s_now - m_InflammatoryResponse->GetLocalMacrophageDelay_s();
-    // Update the delayed effect, but first check whether current_time_s - history_time_s == delay_time_s
-    if (time_s_delayed > (m_InflammatoryResponse->GetLocalMacrophageDelay_s() + 100) | (time_s_delayed < (m_InflammatoryResponse->GetLocalMacrophageDelay_s() - 100)))
-    {
-      // Raise an error
-      Error("BloodChemistry::InflammatoryResponse() - Delayed effect time is not correct for MT");
-    }
-
     // Update the history values, push the new value at the end and pop the value at the begining
     // First create the new value
     std::unique_ptr<SEScalarWithTimeStamp> localmacrophagehistory = std::make_unique<SEScalarWithTimeStamp>();
@@ -1640,14 +1633,14 @@ void BloodChemistry::InflammatoryResponse()
     localmacrophagehistory->SetTimeStamp(time_s_now);
     m_InflammatoryResponse->GetLocalMacrophageHistorys().push(std::move(localmacrophagehistory));
     // assign the MT_refined value for current timestamp formula updates
-    MT_refined = m_InflammatoryResponse->GetLocalNeutrophilHistorys().front()->GetValue();
+    MT_refined = m_InflammatoryResponse->GetLocalMacrophageHistorys().front()->GetValue();
     // Now remove the first value
-    m_InflammatoryResponse->GetLocalNeutrophilHistorys().pop();
+    m_InflammatoryResponse->GetLocalMacrophageHistorys().pop();
   }
 
   // dNT = alpha * R * Nv / ((1.0 + epsNB * B) * (1.0 + epsNM * MT)) - delN * NT;
   // Change the dNT to version using the delayed effect
-  dNT = alpha * R * Nv / ((1.0 + epsNB * B) * (1.0 + epsNM * MT_refined)) - delN * NT_refined;
+  dNT = alpha * R * Nv / ((1.0 + epsNB * B) * (1.0 + epsNM * MT_refined)) - delN * NT;
 
   // Next we add simulation of delay effect from NT to dB
   if (time_s_now < m_InflammatoryResponse->GetLocalNeutrophilDelay_s())
@@ -1657,15 +1650,8 @@ void BloodChemistry::InflammatoryResponse()
     localneutrophilhistory->SetValue(NT);
     localneutrophilhistory->SetTimeStamp(time_s_now);
     m_InflammatoryResponse->GetLocalNeutrophilHistorys().push(std::move(localneutrophilhistory));
+    NT_refined = NT;
   } else {
-    double time_s_delayed = time_s_now - m_InflammatoryResponse->GetLocalNeutrophilDelay_s();
-    // Update the delayed effect, but first check whether current_time_s - history_time_s == delay_time_s
-    if (time_s_delayed > (m_InflammatoryResponse->GetLocalNeutrophilDelay_s() + 100) | (time_s_delayed < (m_InflammatoryResponse->GetLocalNeutrophilDelay_s() - 100)))
-    {
-      // Raise an error
-      Error("BloodChemistry::InflammatoryResponse() - Delayed effect time is not correct for NT");
-    }
-
     // Update the history values, push the new value at the end and pop the value at the begining
     // First create the new value
     std::unique_ptr<SEScalarWithTimeStamp> localneutrophilhistory = std::make_unique<SEScalarWithTimeStamp>();

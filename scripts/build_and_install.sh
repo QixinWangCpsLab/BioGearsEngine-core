@@ -6,6 +6,7 @@ rm -rf /root/biogears
 rm -rf /usr/include/biogears
 rm /usr/lib/*biogears*
 rm -rf /usr/bin/howtos/
+rm /usr/bin/bg-*
 
 mkdir -p ../build && cd ../build && sudo cmake   \
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \

@@ -15,12 +15,31 @@ cmake_minimum_required(VERSION ${Biogears_CMAKE_MIN_VERSION})
 
 include(cmake/cmake-common_logic.cmake)
 
-
 ################################################################################
 # STEP 1: 
 # Change this to custimize your project
 ################################################################################
 project( Biogears  LANGUAGES CXX C )
+
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-fsanitize=address" COMPILER_SUPPORTS_ASAN)
+
+###############################################################################
+# AddressSanitizer Configuration
+###############################################################################
+# if(CMAKE_BUILD_TYPE MATCHES "Debug|Release")
+#   # log a information
+#   message(STATUS "Enabling AddressSanitizer")
+#   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g -O0")
+#   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+#   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+#   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=thread")
+#   # print out the flags
+#   message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+#   message(STATUS "CMAKE_C_FLAGS: ${CMAKE_C_FLAGS}")
+#   message(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+#   message(STATUS "CMAKE_SHARED_LINKER_FLAGS: ${CMAKE_SHARED_LINKER_FLAGS}")
+# endif()
 
  list(APPEND CMAKE_MODULE_PATH   ${PROJECT_SOURCE_DIR}/cmake  ${PROJECT_SOURCE_DIR}/cmake/common )
 

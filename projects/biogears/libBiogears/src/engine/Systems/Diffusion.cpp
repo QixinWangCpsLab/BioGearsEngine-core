@@ -592,14 +592,17 @@ void DiffusionCalculator::CalculateMacromoleculeDiffusion(DiffusionCompartmentSe
   double reflectionCoefficientSmall = reflectionCoefficientSmallBase;
   double tissueMass_kg = tissue.GetTotalMass(MassUnit::kg);
   //Tissues have names like "BrainTissue"--we need to extract the compartment specific tag (e.g. "Brain") to construct circuit path name that we need
-  auto tisPosition = tissue.GetName().find("Tissue");
+  auto tisPosition = tissue.GetName().find("Tissue", 0);
   std::string tisBase = tissue.GetName().substr(0, tisPosition);
   std::string fluidFluxPathName = tisBase + "E2To" + tisBase + "E3";
   double fluidFlux_mL_Per_min = m_data.GetCircuits().GetActiveCardiovascularCircuit().GetPath(fluidFluxPathName)->GetFlow(VolumePerTimeUnit::mL_Per_min);
 
   //We need to increase albumin permeability when there is inflammation
   if (m_data.GetBloodChemistry().GetInflammatoryResponse().HasInflammationSources()) {
-    double tissueIntegrity = m_data.GetBloodChemistry().GetInflammatoryResponse().GetTissueIntegrity().GetValue();
+    volatile biogears::BioGears & bgcopyref = m_data;
+    SEBloodChemistrySystem& chsystem = m_data.GetBloodChemistry();
+    SEInflammatoryResponse& inflammation = m_data.GetBloodChemistry().GetInflammatoryResponse();
+    double tissueIntegrity = inflammation.GetTissueIntegrity().GetValue();
     reflectionCoefficientSmall = reflectionCoefficientSmallBase * tissueIntegrity;
   }
 
