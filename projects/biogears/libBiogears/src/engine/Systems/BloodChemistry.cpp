@@ -1601,7 +1601,10 @@ void BloodChemistry::InflammatoryResponse()
     TLR = CDM::enumOnOff::Off;
   }
   //Process equations
-  dPT = (kapP / uP) * PT * (1.0 - PT) - thetaP * PT / (1.0 + epsPB * B) - psiPN * NT * PT - psiPM * MT * PT;
+  // Modifification 1: How o2 affect the elimination action of the immune system, lower o2 will reduce the immune system's ability to eliminate the pathogen
+  // And we need to amplify the effect of o2 on the immune system
+  const double o2satEffect = GetOxygenSaturation().GetValue();
+  dPT = (kapP / uP) * PT * (1.0 - PT) - thetaP * PT / (1.0 + epsPB * B) - psiPN * NT * PT * o2satEffect - psiPM * MT * PT * o2satEffect;
   if (PT < ZERO_APPROX) {
     //Make sure when we get close to P = 0 that we don't take too big a step and pull a negative P for next iteration
     PT = 0.0;

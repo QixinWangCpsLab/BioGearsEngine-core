@@ -138,6 +138,10 @@ public:
   virtual SEScalarArea& GetAlveoliSurfaceArea();
   virtual double GetAlveoliSurfaceArea(const AreaUnit& unit) const;
 
+  virtual bool HasAlveoliSurfaceAreaBaseline() const;
+  virtual SEScalarArea& GetAlveoliSurfaceAreaBaseline();
+  virtual double GetAlveoliSurfaceAreaBaseline(const AreaUnit& unit) const;
+
   virtual bool HasBasalMetabolicRate() const;
   virtual SEScalarPower& GetBasalMetabolicRate();
   virtual double GetBasalMetabolicRate(const PowerUnit& unit) const;
@@ -295,6 +299,7 @@ protected:
   bool m_BloodRh; // true meaning rh positive and false meaning rh negative
 
   SEScalarArea* m_AlveoliSurfaceArea;
+  SEScalarArea* m_AlveoliSurfaceAreaBaseline;
   SEScalarFraction* m_RightLungRatio;
   SEScalarArea* m_SkinSurfaceArea;
 

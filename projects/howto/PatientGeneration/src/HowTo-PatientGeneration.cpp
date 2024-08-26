@@ -527,6 +527,11 @@ void PatientRun::run()
   _bg->GetEngineTrack()->GetDataTrack().Probe("BaseExcess(mmol/L)", _artbloodanalysis.GetBaseExcess().GetValue(AmountPerVolumeUnit::mmol_Per_L));
   _bg->GetEngineTrack()->GetDataTrack().Probe("BUN(mg/dL)", _comprehenmetabolicpanel.GetBUN().GetValue(MassPerVolumeUnit::mg_Per_dL));
   _bg->GetEngineTrack()->GetDataTrack().Probe("PTT", _ptt.GetInternationalNormalizedRatio().GetValue()); // The definition of this PTT should be checked
+
+  // Below we added some recordings for debugging purpose, regarding the inflammatory response process
+  // Added the IL-6 recording here
+  _bg->GetEngineTrack()->GetDataTrack().Probe("IL-6", _bg->GetBloodChemistrySystem()->GetInflammatoryResponse().GetInterleukin6().GetValue());
+
   // _bg->GetEngineTrack()->GetDataTrack().Probe("Platelet(ct/L)", _cbc.GetPlateletCount().GetValue(AmountPerVolumeUnit::ct_Per_uL));
 
   _bg->GetEngineTrack()->GetDataRequestManager().SetResultsFilename(long_name + ".csv");
@@ -598,6 +603,7 @@ void PatientRun::run()
       _bg->GetEngineTrack()->GetDataTrack().Probe("BaseExcess(mmol/L)", _artbloodanalysis.GetBaseExcess().GetValue(AmountPerVolumeUnit::mmol_Per_L) + _bg->GetSimulationTime(TimeUnit::s));
       _bg->GetEngineTrack()->GetDataTrack().Probe("BUN(mg/dL)", _comprehenmetabolicpanel.GetBUN().GetValue(MassPerVolumeUnit::mg_Per_dL));
       _bg->GetEngineTrack()->GetDataTrack().Probe("PTT", _ptt.GetInternationalNormalizedRatio().GetValue()); // The definition of this PTT should be checked
+      _bg->GetEngineTrack()->GetDataTrack().Probe("IL-6", _bg->GetBloodChemistrySystem()->GetInflammatoryResponse().GetInterleukin6().GetValue());
       // _bg->GetEngineTrack()->GetDataTrack().Probe("Platelet(ct/L)", _cbc.GetPlateletCount().GetValue(AmountPerVolumeUnit::ct_Per_uL));
     }
     _time_remaining_min = hours(_duration_hr) - _bg->GetSimulationTime(TimeUnit::min);

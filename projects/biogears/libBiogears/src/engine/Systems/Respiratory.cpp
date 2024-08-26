@@ -534,7 +534,7 @@ void Respiratory::PreProcess()
   ConsciousRespiration();
   NasalCannula();
   MechanicalVentilation();
-
+  SepticALI();
   RespiratoryDriver();
 }
 
@@ -1120,6 +1120,52 @@ void Respiratory::AcuteRespiratoryDistress()
     m_LeftPulmonaryCapillary->GetNextResistance().SetValue(leftCapillaryResistance, FlowResistanceUnit::cmH2O_s_Per_L);
     rightCapillaryResistance = rightCapillaryResistance * (1.0 + 5.0 * severity);
     m_RightPulmonaryCapillary->GetNextResistance().SetValue(rightCapillaryResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+  }
+}
+
+// SepticALI is used to simulate septic induced acute lung injury by 
+void Respiratory::SepticALI()
+{
+  // First get the levels of IL-6 values
+  // Get the Il-6 values from the inflammatoryResponse class
+  double IL6_level = m_data.GetBloodChemistry().GetInflammatoryResponse().GetInterleukin6().GetValue();
+  // Below calculation is based on the following papers
+  // THE ACUTE INFLAMMATORY RESPONSE IN DIVERSE SHOCK STATES, 10.1097/01.shk.0000168526.97716.f3
+  // Longitudinal clinical and radiographic evaluation reveals interleukin-6 as an indicator of persistent pulmonary injury in COVID-19, doi: 10.7150/ijms.49728
+
+  if (IL6_level > 0.394)
+  {
+    // 1. Trigger the septic AcuteRespiratoryDistress
+    const double capresistanceincrease_severity = 0.8;
+    const double alveolidamage_ratio = 0.5;
+
+    double rightCapillaryResistance = m_RightPulmonaryCapillary->GetResistanceBaseline().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
+    double leftCapillaryResistance = m_LeftPulmonaryCapillary->GetResistanceBaseline().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
+
+    //We do not make use of UpdatePulmonaryCapillaryResistance function because it changes the baseline resistance values
+    // (for chronic conditions), which occurs one time after initial stabilization.  We want to apply this change as long
+    // the ARDS action is active, so we just want to set next resistance each time step as a function of the baseline.
+    leftCapillaryResistance = leftCapillaryResistance * (1.0 + 5.0 * capresistanceincrease_severity);
+    m_LeftPulmonaryCapillary->GetNextResistance().SetValue(leftCapillaryResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+    rightCapillaryResistance = rightCapillaryResistance * (1.0 + 5.0 * capresistanceincrease_severity);
+    m_RightPulmonaryCapillary->GetNextResistance().SetValue(rightCapillaryResistance, FlowResistanceUnit::cmH2O_s_Per_L);
+
+    // 2. Trigger the alveoli surface damage
+    double alveoliDiffusionArea_cm2 = m_Patient->GetAlveoliSurfaceAreaBaseline(AreaUnit::cm2);
+    alveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * (1.0 - alveolidamage_ratio);
+    m_Patient->GetAlveoliSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
+
+    // 3. Trigger event and log it into the log file
+    m_Patient->SetEvent(CDM::enumPatientEvent::AcuteLungInjury, true, m_data.GetSimulationTime());
+  }
+  else
+  {
+    // Reset the resistance to the baseline value
+    m_LeftPulmonaryCapillary->GetNextResistance().SetValue(m_LeftPulmonaryCapillary->GetResistanceBaseline().GetValue(FlowResistanceUnit::cmH2O_s_Per_L), FlowResistanceUnit::cmH2O_s_Per_L);
+    m_RightPulmonaryCapillary->GetNextResistance().SetValue(m_RightPulmonaryCapillary->GetResistanceBaseline().GetValue(FlowResistanceUnit::cmH2O_s_Per_L), FlowResistanceUnit::cmH2O_s_Per_L);
+    // Reset the Alveoli Surface Area
+    double alveoliDiffusionArea_cm2 = m_Patient->GetAlveoliSurfaceAreaBaseline(AreaUnit::cm2);
+    m_Patient->GetAlveoliSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
   }
 }
 //--------------------------------------------------------------------------------------------------

@@ -1,8 +1,17 @@
-mkdir -p ../build && cd ../build && cmake   \
-    -DCMAKE_BUILD_TYPE=Release \
+# Accept Parameters: Release or Debug
+BUILD_TYPE=$1
+
+rm -rf /opt/biogears/core/build
+rm -rf /root/biogears
+rm -rf /usr/include/biogears
+rm /usr/lib/*biogears*
+rm -rf /usr/bin/howtos/
+rm /usr/bin/bg-*
+
+mkdir -p ../build && cd ../build && sudo cmake   \
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
     -DCMAKE_INSTALL_PREFIX=/root/biogears \
     -DCMAKE_CXX_STANDARD=20 \
-    -DCMAKE_CXX_FLAGS=-g    \
     -DBiogears_BUILD_JAVATOOLS=OFF  \
     -DBiogears_SWIG_PYTHON_BINDINGS=OFF \
     -DBiogears_BUILD_SWIG_BINDINGS=OFF  \
@@ -18,10 +27,12 @@ mkdir -p ../build && cd ../build && cmake   \
 
 # make some preparations to make up for the cmake bugs
 mkdir -p /opt/biogears/core/build/projects/biogears/generated/Release/biogears/schema/cdm && \
-mkdir -p /opt/biogears/core/build/projects/biogears/generated/Release/biogears/schema/biogears
+mkdir -p /opt/biogears/core/build/projects/biogears/generated/Release/biogears/schema/biogears \
+mkdir -p /opt/biogears/core/build/projects/biogears/generated/Debug/biogears/schema/cdm/ && \
+mkdir -p /opt/biogears/core/build/projects/biogears/generated/Debug/biogears/schema/biogears
 
 # Then build and install
-cd ../build && cmake --build . --target howto-patientgeneration -j 18 && cmake --install .
+cd ../build && cmake --build . -j 18 && cmake --install .
 
 # move the folders of biogears to usr
 cp -r /root/biogears/* /usr && rm -rf /root/biogears

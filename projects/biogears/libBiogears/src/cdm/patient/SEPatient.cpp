@@ -41,6 +41,7 @@ SEPatient::SEPatient(Logger* logger)
   m_Height = nullptr;
 
   m_AlveoliSurfaceArea = nullptr;
+  m_AlveoliSurfaceAreaBaseline = nullptr;
   m_BasalMetabolicRate = nullptr;
   m_BloodRh = true;
   m_BloodType = (CDM::enumBloodType::value)-1;
@@ -141,6 +142,7 @@ void SEPatient::Clear()
   SAFE_DELETE(m_Height);
 
   SAFE_DELETE(m_AlveoliSurfaceArea);
+  SAFE_DELETE(m_AlveoliSurfaceAreaBaseline);
   SAFE_DELETE(m_BasalMetabolicRate);
   m_BloodRh = true;
   m_BloodType = (CDM::enumBloodType::value)-1;
@@ -189,6 +191,8 @@ const SEScalar* SEPatient::GetScalar(const std::string& name)
     return &GetHeight();
   if (name.compare("AlveoliSurfaceArea") == 0)
     return &GetAlveoliSurfaceArea();
+  if (name.compare("AlveoliSurfaceAreaBaseline") == 0)
+    return &GetAlveoliSurfaceAreaBaseline();
   if (name.compare("BasalMetabolicRate") == 0)
     return &GetBasalMetabolicRate();
   if (name.compare("BloodVolumeBaseline") == 0)
@@ -284,6 +288,9 @@ bool SEPatient::Load(const CDM::PatientData& in)
   }
   if (in.AlveoliSurfaceArea().present()) {
     GetAlveoliSurfaceArea().Load(in.AlveoliSurfaceArea().get());
+    // Here the AlveoliSurfaceAreaBaseline is special, it does not have a specific location in xml file,
+    // But set as the same value as the AlveoliSurfaceArea when loading
+    GetAlveoliSurfaceAreaBaseline().Load(in.AlveoliSurfaceArea().get());
   }
   if (in.BasalMetabolicRate().present()) {
     GetBasalMetabolicRate().Load(in.BasalMetabolicRate().get());
@@ -1163,6 +1170,11 @@ bool SEPatient::HasAlveoliSurfaceArea() const
   return m_AlveoliSurfaceArea == nullptr ? false : m_AlveoliSurfaceArea->IsValid();
 }
 //-----------------------------------------------------------------------------
+bool SEPatient::HasAlveoliSurfaceAreaBaseline() const
+{
+  return m_AlveoliSurfaceAreaBaseline == nullptr ? false : m_AlveoliSurfaceAreaBaseline->IsValid();
+}
+//-----------------------------------------------------------------------------
 SEScalarArea& SEPatient::GetAlveoliSurfaceArea()
 {
   if (m_AlveoliSurfaceArea == nullptr) {
@@ -1171,12 +1183,28 @@ SEScalarArea& SEPatient::GetAlveoliSurfaceArea()
   return *m_AlveoliSurfaceArea;
 }
 //-----------------------------------------------------------------------------
+SEScalarArea& SEPatient::GetAlveoliSurfaceAreaBaseline()
+{
+  if (m_AlveoliSurfaceAreaBaseline == nullptr) {
+    m_AlveoliSurfaceAreaBaseline = new SEScalarArea();
+  }
+  return *m_AlveoliSurfaceAreaBaseline;
+}
+//-----------------------------------------------------------------------------
 double SEPatient::GetAlveoliSurfaceArea(const AreaUnit& unit) const
 {
   if (m_AlveoliSurfaceArea == nullptr) {
     return SEScalar::dNaN();
   }
   return m_AlveoliSurfaceArea->GetValue(unit);
+}
+//-----------------------------------------------------------------------------
+double SEPatient::GetAlveoliSurfaceAreaBaseline(const AreaUnit& unit) const
+{
+  if (m_AlveoliSurfaceAreaBaseline == nullptr) {
+    return SEScalar::dNaN();
+  }
+  return m_AlveoliSurfaceAreaBaseline->GetValue(unit);
 }
 //-----------------------------------------------------------------------------
 bool SEPatient::HasBasalMetabolicRate() const

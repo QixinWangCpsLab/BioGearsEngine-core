@@ -103,6 +103,7 @@ private:
   void COPD();
   void ImpairedAlveolarExchange();
   void LobarPneumonia();
+  void SepticALI();
 
   //PreProcess
   void UpdatePleuralCompliance();
