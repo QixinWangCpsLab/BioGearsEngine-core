@@ -12,6 +12,7 @@ mkdir -p ../build && cd ../build && sudo cmake   \
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
     -DCMAKE_INSTALL_PREFIX=/root/biogears \
     -DCMAKE_CXX_STANDARD=20 \
+    -DCMAKE_CXX_FLAGS="-g -fsanitize=leak -O0 -fsanitize=address"    \
     -DBiogears_BUILD_JAVATOOLS=OFF  \
     -DBiogears_SWIG_PYTHON_BINDINGS=OFF \
     -DBiogears_BUILD_SWIG_BINDINGS=OFF  \

@@ -37,7 +37,7 @@ RUN apt-get install -y --no-install-recommends \
     libssl-dev 
 
 # Install CMake
-RUN mkdir -p /src && cd /src \
+RUN mkdir -p ~/src && cd ~/src \
     && wget https://github.com/Kitware/CMake/releases/download/v3.20.0/cmake-3.20.0.tar.gz --no-check-certificate \
     && tar -xf cmake-3.20.*.tar.gz \
     && cd cmake-3.20.0 \
