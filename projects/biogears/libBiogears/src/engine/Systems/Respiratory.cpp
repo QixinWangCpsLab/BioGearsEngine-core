@@ -1136,8 +1136,8 @@ void Respiratory::SepticALI()
   if (IL6_level > 0.394)
   {
     // 1. Trigger the septic AcuteRespiratoryDistress
-    const double capresistanceincrease_severity = 0.8;
-    const double alveolidamage_ratio = 0.5;
+    const double capresistanceincrease_severity = 2.0;
+    const double alveolidamage_ratio = 0.8;
 
     double rightCapillaryResistance = m_RightPulmonaryCapillary->GetResistanceBaseline().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
     double leftCapillaryResistance = m_LeftPulmonaryCapillary->GetResistanceBaseline().GetValue(FlowResistanceUnit::cmH2O_s_Per_L);
@@ -1154,9 +1154,6 @@ void Respiratory::SepticALI()
     double alveoliDiffusionArea_cm2 = m_Patient->GetAlveoliSurfaceAreaBaseline(AreaUnit::cm2);
     alveoliDiffusionArea_cm2 = alveoliDiffusionArea_cm2 * (1.0 - alveolidamage_ratio);
     m_Patient->GetAlveoliSurfaceArea().SetValue(alveoliDiffusionArea_cm2, AreaUnit::cm2);
-
-    // 3. Trigger event and log it into the log file
-    m_Patient->SetEvent(CDM::enumPatientEvent::AcuteLungInjury, true, m_data.GetSimulationTime());
   }
   else
   {

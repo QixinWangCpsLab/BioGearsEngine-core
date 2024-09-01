@@ -1610,8 +1610,8 @@ void BloodChemistry::InflammatoryResponse()
     PT = 0.0;
     dPT = 0.0;
   }
-  dMT = beta * NT / (1.0 + epsMB * B) * Mv - delM * MT;
-  dNT = alpha * R * Nv / ((1.0 + epsNB * B) * (1.0 + epsNM * MT)) - delN * NT;
+  dMT = beta * NT / (1.0 + epsMB * B) * Mv - delM * MT * (2 - o2satEffect);
+  dNT = alpha * R * Nv / ((1.0 + epsNB * B) * (1.0 + epsNM * MT)) - delN * NT * (2 - o2satEffect);
   dB = kapB / (1.0 + epsBP * R) * B * (1.0 - B) - psiBP * R * B - psiBN * NT * B;
   dPB = (kapP - antibacterialEffect) * PB + thetaP * PT / (1.0 + epsPB * B) - kPS * PB / (xPS + PB) - kPN * NA * GeneralMath::HillActivation(PB, xPN, 2.0);
   dTR = -kTr * TR; //This is assumed to be the driving force for burn
